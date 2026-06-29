@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — панель управления</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <link rel="icon" href="{{ media(setting('logo'), 'img/image5.jpg') }}">
+</head>
+<body class="admin">
+{% import "_macros.html" as ui with context %}
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    {% if setting('logo') %}
+    <div class="auth-logo"><img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name','ТОО «АВС-Лимитед»') }}"></div>
+    {% endif %}
+
+    <h1>Панель управления</h1>
+    <p class="sub">{{ setting('brand_name','ТОО «АВС-Лимитед»') }}</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash-a {{ cat }}">{{ ui.icon('check-circle' if cat=='success' else 'x') }} {{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('admin_login') }}" class="form-a">
+      {{ ui.csrf() }}
+      <div class="fld">
+        <label for="f_username">Логин</label>
+        <input type="text" id="f_username" name="username" required autofocus autocomplete="username">
+      </div>
+      <div class="fld">
+        <label for="f_password">Пароль</label>
+        <input type="password" id="f_password" name="password" required autocomplete="current-password">
+      </div>
+      <button class="btn-a primary" type="submit" style="width:100%;justify-content:center">{{ ui.icon('shield') }} Войти</button>
+    </form>
+
+    <p class="auth-hint">Доступ только для администраторов сайта.</p>
+    <p class="auth-hint"><a href="{{ url_for('home') }}">{{ ui.icon('chevron-left') }} Вернуться на сайт</a></p>
+  </div>
+</div>
+
+</body>
+</html>

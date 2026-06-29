@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ========================================================== PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image,'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ============================================================ СВОДКА #}
+<section class="section section--tight section--soft">
+  <div class="container">
+    <div class="stat-strip" data-reveal>
+      <div class="stat-cell">
+        <div class="stat-ico">{{ ui.icon('truck') }}</div>
+        <div class="stat-num"><span data-count="{{ total_units }}">0</span></div>
+        <div class="stat-lbl">единиц в автопарке</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-ico">{{ ui.icon('list') }}</div>
+        <div class="stat-num"><span data-count="{{ items|length }}">0</span></div>
+        <div class="stat-lbl">позиций номенклатуры</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-ico">{{ ui.icon('shield-check') }}</div>
+        <div class="stat-num">100<span class="suf">%</span></div>
+        <div class="stat-lbl">собственная техника</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-ico">{{ ui.icon('zap') }}</div>
+        <div class="stat-num"><span data-count="10">0</span></div>
+        <div class="stat-lbl">новых бетоносмесителей 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================================================== ВСТУПЛЕНИЕ #}
+{% if page.intro %}
+<section class="section">
+  <div class="container">
+    <div class="prose" data-reveal>{{ page.intro|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ ТАБЛИЦА #}
+<section class="section section--soft">
+  <div class="container">
+    {{ ui.sec_head('Автопарк', 'Парк машин, механизмов и оборудования', 'Собственная транспортная и специальная техника, обеспечивающая полный производственный цикл и независимость на всех этапах работ.') }}
+    <div class="table-wrap" data-reveal>
+      <table class="eq">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Наименование техники</th>
+            <th>Год выпуска</th>
+            <th>Категория / масса</th>
+            <th>Кол-во</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in items %}
+          <tr>
+            <td class="num">{{ i.num }}</td>
+            <td class="name">{{ i.name }}</td>
+            <td>{{ i.year }}</td>
+            <td><span class="pill">{{ i.spec }}</span></td>
+            <td><span class="qty">{{ i.qty }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{# ============================================================ CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

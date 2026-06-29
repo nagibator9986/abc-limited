@@ -1,0 +1,90 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ 'Новая запись' if is_new else 'Редактирование' }} — {{ cfg.title }}{% endblock %}
+{% block heading %}{{ cfg.title }}{% endblock %}
+{% block crumb %}<div class="crumb"><a href="{{ url_for('admin_list', key=key) }}">← {{ cfg.title }}</a></div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Добавить' if is_new else 'Изменить' }} {{ cfg.singular }}</h1>
+    <p>Заполните поля ниже. Изменения сразу отобразятся на сайте.</p>
+  </div>
+  <a href="{{ url_for('admin_list', key=key) }}" class="btn-a ghost">{{ ui.icon('chevron-left') }} Назад к списку</a>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="card-a">
+  {{ ui.csrf() }}
+  <div class="card-a__body">
+    <div class="form-a">
+      {% for f in cfg.fields %}
+        {% set val = obj[f.name] %}
+        <div class="fld">
+          {% if f.type == 'bool' %}
+            <label class="switch">
+              <input type="checkbox" name="{{ f.name }}" {{ 'checked' if val }}>
+              <span class="track"></span>
+              <span class="lbl">{{ f.label }}</span>
+            </label>
+          {% else %}
+            <label for="f_{{ f.name }}">{{ f.label }}{% if f.hint %} <span class="hint">— {{ f.hint }}</span>{% endif %}</label>
+
+            {% if f.type == 'textarea' %}
+              <textarea id="f_{{ f.name }}" name="{{ f.name }}" {{ 'readonly' if f.readonly }}>{{ val or '' }}</textarea>
+
+            {% elif f.type == 'html' %}
+              <textarea id="f_{{ f.name }}" name="{{ f.name }}" class="tall">{{ val or '' }}</textarea>
+              <span class="hint">Допускается HTML-разметка: &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;&lt;li&gt;, &lt;br&gt;.</span>
+
+            {% elif f.type == 'number' %}
+              <input type="number" id="f_{{ f.name }}" name="{{ f.name }}" value="{{ val if val is not none else 0 }}">
+
+            {% elif f.type == 'color' %}
+              <div style="display:flex;gap:12px;align-items:center">
+                <input type="color" name="{{ f.name }}" value="{{ val or '#0e2a4f' }}" oninput="this.nextElementSibling.value=this.value">
+                <input type="text" value="{{ val or '' }}" oninput="this.previousElementSibling.value=this.value" style="max-width:140px" readonly>
+              </div>
+
+            {% elif f.type == 'icon' %}
+              <input type="text" id="f_{{ f.name }}" name="{{ f.name }}" value="{{ val or '' }}" list="iconlist" placeholder="check, truck, shield…">
+              <span class="hint">Имя иконки: check, check-circle, shield, shield-check, award, truck, factory, layers, briefcase, target, globe, heart, clock, calendar, users, building, road, hard-hat, scale, zap, settings, box, mountain, droplet, trending-up, star.</span>
+
+            {% elif f.type == 'image' %}
+              <div class="img-field">
+                {% if val %}
+                  <img src="{{ media(val) }}" class="preview" alt="">
+                {% else %}
+                  <div class="preview empty">{{ ui.icon('file') }}</div>
+                {% endif %}
+                <div class="controls">
+                  <div class="file-input">
+                    <input type="file" name="file_{{ f.name }}" accept="image/*">
+                  </div>
+                  <input type="text" name="{{ f.name }}" value="{{ val or '' }}" placeholder="или путь: img/imageNN.jpg">
+                  {% if val %}
+                  <label class="clear-check"><input type="checkbox" name="clear_{{ f.name }}"> {{ ui.icon('x') }} Удалить изображение</label>
+                  {% endif %}
+                </div>
+              </div>
+
+            {% else %}
+              <input type="text" id="f_{{ f.name }}" name="{{ f.name }}" value="{{ val or '' }}" {{ 'readonly' if f.readonly }}>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-a primary">{{ ui.icon('check') }} Сохранить</button>
+      <a href="{{ url_for('admin_list', key=key) }}" class="btn-a ghost">Отмена</a>
+    </div>
+  </div>
+</form>
+
+<datalist id="iconlist">
+  {% for n in ['check','check-circle','shield','shield-check','award','truck','factory','layers','briefcase','target','globe','heart','phone','mail','map-pin','clock','calendar','users','building','road','hard-hat','scale','zap','settings','box','mountain','droplet','trending-up','star','gauge','cpu','compass','list'] %}
+  <option value="{{ n }}">
+  {% endfor %}
+</datalist>
+{% endblock %}

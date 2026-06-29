@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ cfg.title }}{% endblock %}
+{% block heading %}{{ cfg.title }}{% endblock %}
+{% block crumb %}<div class="crumb">Содержимое · {{ items|length }} {{ ui.plural(items|length) }}</div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ ui.icon(cfg.icon) }} {{ cfg.title }}</h1>
+    <p>Управление разделом сайта. Всего записей: {{ items|length }}.</p>
+  </div>
+  {% if cfg.can_create != false %}
+  <a href="{{ url_for('admin_create', key=key) }}" class="btn-a primary">{{ ui.icon('check') }} Добавить {{ cfg.singular }}</a>
+  {% endif %}
+</div>
+
+<div class="card-a">
+  {% if items %}
+  <div style="overflow-x:auto">
+    <table class="table-a">
+      <thead>
+        <tr>
+          {% for col in cfg.list_display %}
+            <th class="{{ 'hide-sm' if not loop.first and not loop.last }}">{{ col_label(cfg, col) }}</th>
+          {% endfor %}
+          <th style="text-align:right">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in items %}
+        <tr>
+          {% for col in cfg.list_display %}
+            {% set val = obj[col] %}
+            <td class="{{ 'main' if loop.first }} {{ 'hide-sm' if not loop.first and not loop.last }}">
+              {% if col in ('is_active','in_menu','is_published','is_featured') %}
+                <span class="dot-status {{ 'on' if val else 'off' }}"><span class="d"></span>{{ 'Да' if val else 'Нет' }}</span>
+              {% elif col in ('image','hero_image') and val %}
+                <img src="{{ media(val) }}" class="thumb-mini" alt="">
+              {% elif col in ('category',) and val %}
+                <span class="tag-a">{{ val }}</span>
+              {% else %}
+                {{ (val|string)|truncate(48) if val is not none else '—' }}
+              {% endif %}
+            </td>
+          {% endfor %}
+          <td>
+            <div class="actions">
+              {% if 'is_active' in obj.__table__.columns.keys() %}
+              <form method="post" action="{{ url_for('admin_toggle', key=key, obj_id=obj.id) }}" style="display:inline">
+                {{ ui.csrf() }}
+                <button type="submit" class="btn-a ghost sm" aria-label="Включить или выключить запись" title="Вкл/выкл">{{ ui.icon('zap') }}</button>
+              </form>
+              {% endif %}
+              <a href="{{ url_for('admin_edit', key=key, obj_id=obj.id) }}" class="btn-a navy sm">{{ ui.icon('settings') }} Изменить</a>
+              {% if cfg.can_delete != false %}
+              <form method="post" action="{{ url_for('admin_delete', key=key, obj_id=obj.id) }}" onsubmit="return confirm('Удалить эту запись безвозвратно?');" style="display:inline">
+                {{ ui.csrf() }}
+                <button class="btn-a danger sm" type="submit" aria-label="Удалить запись" title="Удалить">{{ ui.icon('x') }}</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-a">
+    {{ ui.icon(cfg.icon) }}
+    <p style="margin-top:12px">Пока нет ни одной записи.</p>
+    {% if cfg.can_create != false %}<a href="{{ url_for('admin_create', key=key) }}" class="btn-a primary" style="margin-top:14px">Добавить первую запись</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

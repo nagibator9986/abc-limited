@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ========================================================== PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image, 'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ========================================================== ВСТУПЛЕНИЕ #}
+{% if page.intro %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Перспективные направления</span>
+      <h2>Задачи, над которыми мы работаем сегодня</h2>
+      <p>Приоритетные объекты и направления развития компании на текущий период.</p>
+    </div>
+    <div class="prose" data-reveal data-delay="1">{{ page.intro|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# ========================================================== СПИСОК ЗАДАЧ #}
+{% if tasks %}
+<section class="section section--soft">
+  <div class="container">
+    <div style="display:flex;flex-direction:column;gap:32px">
+      {% for t in tasks %}
+      <div class="task-card" data-reveal>
+        <div class="task-card__media"><img src="{{ media(t.image, 'img/image39.jpg') }}" alt="{{ t.title }}" loading="lazy"></div>
+        <div class="task-card__body">
+          <span class="task-tag">Актуальная задача</span>
+          <h3>{{ t.title }}</h3>
+          {% if t.object_name %}<div class="task-field"><div class="k">Объект</div><div class="v">{{ t.object_name }}</div></div>{% endif %}
+          {% if t.customer %}<div class="task-field"><div class="k">Заказчик</div><div class="v">{{ t.customer }}</div></div>{% endif %}
+          {% if t.description %}<div class="task-field"><div class="k">О проекте</div><div class="v">{{ t.description }}</div></div>{% endif %}
+          {% if t.quote %}<div class="task-quote"><p>«{{ t.quote }}»</p>{% if t.quote_author %}<cite>{{ t.quote_author }}</cite>{% endif %}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

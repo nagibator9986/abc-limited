@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}Настройки сайта{% endblock %}
+{% block heading %}Настройки сайта{% endblock %}
+{% block crumb %}<div class="crumb">Сайт · оформление и контент</div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ ui.icon('settings') }} Настройки сайта</h1>
+    <p>Бренд, контакты, тексты блоков и оформление</p>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{{ url_for('admin_settings') }}" class="card-a">
+  {{ ui.csrf() }}
+  <div class="card-a__body">
+    <div class="tabs">
+      {% for group, items in groups.items() %}
+        <button type="button" class="tab-btn {{ 'active' if loop.first }}" data-tab="g{{ loop.index }}">{{ group }}</button>
+      {% endfor %}
+    </div>
+
+    {% for group, items in groups.items() %}
+      <div class="tab-pane {{ 'active' if loop.first }}" id="g{{ loop.index }}">
+        {% for s in items %}
+          <div class="fld">
+            {% if s.input_type == 'image' %}
+              <label>{{ s.label }}</label>
+              <div class="img-field">
+                {% if s.value %}
+                  <img src="{{ media(s.value) }}" class="preview" alt="">
+                {% else %}
+                  <div class="preview empty">{{ ui.icon('file') }}</div>
+                {% endif %}
+                <div class="controls">
+                  <div class="file-input">
+                    <input type="file" name="file_{{ s.key }}" accept="image/*">
+                  </div>
+                  <input type="text" name="setting_{{ s.key }}" value="{{ s.value }}" placeholder="img/...">
+                  <label class="clear-check"><input type="checkbox" name="clear_{{ s.key }}"> {{ ui.icon('x') }} Удалить</label>
+                </div>
+              </div>
+            {% elif s.input_type == 'textarea' %}
+              <label for="set_{{ s.key }}">{{ s.label }}</label>
+              <textarea id="set_{{ s.key }}" name="setting_{{ s.key }}">{{ s.value }}</textarea>
+            {% elif s.input_type == 'color' %}
+              <label for="set_{{ s.key }}">{{ s.label }}</label>
+              <div style="display:flex;gap:12px;align-items:center">
+                <input type="color" id="set_{{ s.key }}" name="setting_{{ s.key }}" value="{{ s.value or '#0e2a4f' }}" oninput="this.nextElementSibling.value=this.value">
+                <input type="text" value="{{ s.value or '#0e2a4f' }}" oninput="this.previousElementSibling.value=this.value" style="max-width:140px" readonly>
+              </div>
+            {% else %}
+              <label for="set_{{ s.key }}">{{ s.label }}</label>
+              <input type="text" id="set_{{ s.key }}" name="setting_{{ s.key }}" value="{{ s.value }}">
+            {% endif %}
+            {% if s.hint %}<span class="hint">{{ s.hint }}</span>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button class="btn-a primary" type="submit">{{ ui.icon('check') }} Сохранить настройки</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function(){
+    var btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){
+        document.querySelectorAll('.tab-btn').forEach(function(x){ x.classList.remove('active'); });
+        document.querySelectorAll('.tab-pane').forEach(function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        var pane = document.getElementById(b.dataset.tab);
+        if (pane) pane.classList.add('active');
+      });
+    });
+  })();
+</script>
+{% endblock %}

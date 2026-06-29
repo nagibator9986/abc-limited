@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page.title if page else setting('brand_name') }}{% endblock %} — {{ setting('brand_name', 'ТОО «АВС-Лимитед»') }}</title>
+  <meta name="description" content="{% block meta_desc %}{{ page.meta_description if page and page.meta_description else setting('site_description') }}{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="{{ media(setting('logo'), 'img/image5.jpg') }}">
+  {% if setting('theme_primary') or setting('theme_accent') %}
+  <style>:root{
+    {% if setting('theme_primary') %}--navy-800:{{ setting('theme_primary') }};--navy-900:{{ setting('theme_primary') }};{% endif %}
+    {% if setting('theme_accent') %}--red-600:{{ setting('theme_accent') }};{% endif %}
+  }</style>
+  {% endif %}
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% import "_macros.html" as ui with context %}
+<a href="#main" class="skip-link">Перейти к содержимому</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="topbar">
+    <div class="container">
+      <div class="tb-left">
+        {% if setting('address') %}<span class="tb-addr hide-sm">{{ ui.icon('map-pin') }} {{ setting('address_short', setting('address')) }}</span>{% endif %}
+        {% if setting('work_hours') %}<span class="hide-sm">{{ ui.icon('clock') }} {{ setting('work_hours') }}</span>{% endif %}
+      </div>
+      <div class="tb-right">
+        {% if setting('email') %}<a href="mailto:{{ setting('email') }}">{{ ui.icon('mail') }} {{ setting('email') }}</a>{% endif %}
+        {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <nav class="container nav" aria-label="Главное меню">
+    <a href="{{ url_for('home') }}" class="brand" aria-label="{{ setting('brand_name', 'ТОО «АВС-Лимитед»') }} — на главную">
+      {% if setting('logo') %}
+        <img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name') }}">
+      {% else %}
+        <span class="brand-txt">
+          <strong>{{ setting('brand_short', 'АВС-Лимитед') }}</strong>
+          <span>{{ setting('brand_tagline', 'строительная компания') }}</span>
+        </span>
+      {% endif %}
+    </a>
+
+    <ul class="menu" id="menu">
+      {% for np in nav_pages %}
+        <li><a href="{{ page_url(np.slug) }}" class="{{ 'active' if request.endpoint == np.slug }}">{{ np.menu_label or np.title }}</a></li>
+      {% endfor %}
+    </ul>
+
+    <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-stack" id="flashStack">
+    {% for cat, msg in messages %}
+    <div class="flash {{ cat }}">
+      {{ ui.icon('check-circle' if cat == 'success' else 'x') }}
+      <p>{{ msg }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+<main id="main" tabindex="-1">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        {% if setting('logo') %}<img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name') }}">{% endif %}
+        <p>{{ setting('footer_about', setting('site_description')) }}</p>
+      </div>
+      <div class="foot-col">
+        <h4>Компания</h4>
+        <ul>
+          {% for np in nav_pages %}
+            <li><a href="{{ page_url(np.slug) }}">{{ np.menu_label or np.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Деятельность</h4>
+        <ul>
+          <li><a href="{{ url_for('services') }}">Виды деятельности</a></li>
+          <li><a href="{{ url_for('production') }}">Производственная база</a></li>
+          <li><a href="{{ url_for('equipment') }}">Парк техники</a></li>
+          <li><a href="{{ url_for('projects') }}">Реализованные проекты</a></li>
+          <li><a href="{{ url_for('testimonials') }}">Благодарности</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Контакты</h4>
+        <ul class="foot-contact">
+          {% if setting('address') %}<li>{{ ui.icon('map-pin') }}<span>{{ setting('address') }}</span></li>{% endif %}
+          {% if setting('phone') %}<li>{{ ui.icon('phone') }}<a href="tel:{{ setting('phone')|tel_clean }}">{{ setting('phone') }}</a></li>{% endif %}
+          {% if setting('phone2') %}<li>{{ ui.icon('phone') }}<a href="tel:{{ setting('phone2')|tel_clean }}">{{ setting('phone2') }}</a></li>{% endif %}
+          {% if setting('email') %}<li>{{ ui.icon('mail') }}<a href="mailto:{{ setting('email') }}">{{ setting('email') }}</a></li>{% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ setting('founded_year', '1999') }}—2026 {{ setting('brand_name', 'ТОО «АВС-Лимитед»') }}. Все права защищены.</span>
+      <span>
+        {% if setting('company_bin') %}БИН {{ setting('company_bin') }}{% endif %}
+        {% if setting('director_name') %}<span style="opacity:.5">·</span> {{ setting('director_title', 'Генеральный директор') }}: {{ setting('director_name') }}{% endif %}
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

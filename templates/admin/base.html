@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Панель управления{% endblock %} — {{ setting('brand_short', 'АВС-Лимитед') }} CMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <link rel="icon" href="{{ media(setting('logo'), 'img/image5.jpg') }}">
+</head>
+<body class="admin">
+{% import "_macros.html" as ui with context %}
+{% set unread = (admin_unread if admin_unread is defined else 0) %}
+
+<div class="admin-shell" id="adminShell">
+  <aside class="sidebar">
+    <a href="{{ url_for('admin_dashboard') }}" class="sidebar__brand">
+      {% if setting('logo') %}<img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name', 'ТОО «АВС-Лимитед»') }}">{% endif %}
+      <span class="t"><strong>{{ setting('brand_short', 'АВС-Лимитед') }}</strong><span>Панель управления</span></span>
+    </a>
+
+    <div class="nav-group">
+      <div class="nav-group__label">Обзор</div>
+      <a href="{{ url_for('admin_dashboard') }}" class="nav-link {{ 'active' if request.endpoint == 'admin_dashboard' }}">{{ ui.icon('bar-chart') }} Дашборд</a>
+      <a href="{{ url_for('admin_leads') }}" class="nav-link {{ 'active' if request.endpoint == 'admin_leads' }}">{{ ui.icon('mail') }} Заявки {% if unread %}<span class="badge">{{ unread }}</span>{% endif %}</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group__label">Содержимое</div>
+      {% for k, c in admin_registry.items() %}
+        <a href="{{ url_for('admin_list', key=k) }}" class="nav-link {{ 'active' if request.view_args and request.view_args.get('key') == k }}">{{ ui.icon(c.icon) }} {{ c.title }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group__label">Сайт</div>
+      <a href="{{ url_for('admin_settings') }}" class="nav-link {{ 'active' if request.endpoint == 'admin_settings' }}">{{ ui.icon('settings') }} Настройки сайта</a>
+      <a href="{{ url_for('admin_account') }}" class="nav-link {{ 'active' if request.endpoint == 'admin_account' }}">{{ ui.icon('shield') }} Безопасность</a>
+    </div>
+
+    <div class="sidebar__foot">
+      <a href="{{ url_for('home') }}" target="_blank" class="nav-link">{{ ui.icon('globe') }} Открыть сайт</a>
+      <form method="post" action="{{ url_for('admin_logout') }}" class="logout-form">
+        {{ ui.csrf() }}
+        <button type="submit" class="nav-link logout-btn">{{ ui.icon('arrow-right') }} Выйти</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <div class="admin-main">
+    <header class="topbar-a">
+      <div class="left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Меню" aria-expanded="false">{{ ui.icon('menu') }}</button>
+        <div>
+          <h1>{% block heading %}Панель управления{% endblock %}</h1>
+          {% block crumb %}{% endblock %}
+        </div>
+      </div>
+      <div class="right">
+        <a href="{{ url_for('home') }}" target="_blank" class="btn-a ghost sm">{{ ui.icon('globe') }} Сайт</a>
+        <div class="usr">
+          <span class="av">{{ (session.get('admin_name','A'))[0]|upper }}</span>
+          <span class="nm">{{ session.get('admin_name', 'Администратор') }}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for cat, msg in messages %}
+          <div class="flash-a {{ cat }}">{{ ui.icon('check-circle' if cat=='success' else 'x') }} {{ msg }}</div>
+        {% endfor %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var t = document.getElementById('menuToggle'),
+        s = document.getElementById('adminShell'),
+        sc = document.getElementById('scrim');
+    if (t) t.addEventListener('click', function(){
+      var open = s.classList.toggle('nav-open');
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    if (sc) sc.addEventListener('click', function(){
+      s.classList.remove('nav-open');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    });
+  })();
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+venv/
+.venv/
+env/
+
+# База данных и пользовательские данные (создаются при первом запуске)
+abc.db
+abc.db-journal
+abc.db-wal
+abc.db-shm
+data/
+/uploads/
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Окружение и секреты
+.env
+.env.local
+
+# Исходники для генерации (не нужны на хостинге; изображения уже в static/img)
+extracted_media/
+*.pptx
+
+# Системное
+.DS_Store
+*.log

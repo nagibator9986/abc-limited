@@ -1,0 +1,117 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}Дашборд{% endblock %}
+{% block heading %}Дашборд{% endblock %}
+{% block crumb %}<div class="crumb">Обзор содержимого сайта</div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Добро пожаловать!</h1>
+    <p>Управляйте всем содержимым сайта из одного места.</p>
+  </div>
+  <a href="{{ url_for('home') }}" target="_blank" class="btn-a navy">{{ ui.icon('globe') }} Открыть сайт</a>
+</div>
+
+<div class="stat-cards">
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('file') }}</span>
+    <div><div class="n">{{ counts.pages }}</div><div class="l">Страницы</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('briefcase') }}</span>
+    <div><div class="n">{{ counts.projects }}</div><div class="l">Проекты</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('layers') }}</span>
+    <div><div class="n">{{ counts.services }}</div><div class="l">Виды деятельности</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('factory') }}</span>
+    <div><div class="n">{{ counts.assets }}</div><div class="l">Активы</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('truck') }}</span>
+    <div><div class="n">{{ counts.equipment }}</div><div class="l">Техника</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('heart') }}</span>
+    <div><div class="n">{{ counts.testimonials }}</div><div class="l">Благодарности</div></div>
+  </div>
+  <div class="stat-c">
+    <span class="ic">{{ ui.icon('mail') }}</span>
+    <div><div class="n">{{ counts.leads }}</div><div class="l">Заявки</div></div>
+  </div>
+</div>
+
+{% if unread > 0 %}
+<a href="{{ url_for('admin_leads') }}" class="card-a" style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 24px;margin-bottom:26px;border-left:4px solid var(--a-red)">
+  <span class="dot-status on" style="font-size:1rem">{{ ui.icon('mail') }} Новых заявок: {{ unread }}</span>
+  <span class="btn-a primary sm">{{ ui.icon('chevron-left') }} Перейти к заявкам</span>
+</a>
+{% endif %}
+
+<div class="card-a" style="margin-bottom:26px">
+  <div class="card-a__head">
+    <h2>Разделы сайта</h2>
+  </div>
+  <div class="card-a__body">
+    <div class="quick-grid">
+      {% for k, c in admin_registry.items() %}
+      <a href="{{ url_for('admin_list', key=k) }}" class="quick-tile">
+        <span class="qi">{{ ui.icon(c.icon) }}</span>
+        <div><strong>{{ c.title }}</strong><span>{{ counts.get(k, '') }} записей</span></div>
+      </a>
+      {% endfor %}
+      <a href="{{ url_for('admin_settings') }}" class="quick-tile">
+        <span class="qi">{{ ui.icon('settings') }}</span>
+        <div><strong>Настройки сайта</strong><span>Контакты, бренд, SEO</span></div>
+      </a>
+      <a href="{{ url_for('admin_leads') }}" class="quick-tile">
+        <span class="qi">{{ ui.icon('mail') }}</span>
+        <div><strong>Заявки</strong><span>{{ counts.leads }} записей</span></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="card-a">
+  <div class="card-a__head">
+    <h2>Последние заявки</h2>
+    <a href="{{ url_for('admin_leads') }}" class="btn-a ghost sm">{{ ui.icon('list') }} Все заявки</a>
+  </div>
+  <div class="card-a__body" style="padding:0">
+    {% if recent_leads %}
+    <div style="overflow-x:auto">
+      <table class="table-a">
+        <thead>
+          <tr>
+            <th>Имя</th>
+            <th class="hide-sm">Контакт</th>
+            <th class="hide-sm">Сообщение</th>
+            <th>Когда</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lead in recent_leads %}
+          <tr>
+            <td class="main">
+              {% if not lead.is_read %}<span class="dot-status on"><span class="d"></span></span> {% endif %}{{ lead.name }}
+            </td>
+            <td class="hide-sm">{{ lead.phone or lead.email or '—' }}</td>
+            <td class="hide-sm">{{ (lead.message|string)|truncate(60) if lead.message else '—' }}</td>
+            <td>{{ lead.created_at.strftime('%d.%m.%Y %H:%M') if lead.created_at else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-a">
+      {{ ui.icon('mail') }}
+      <p style="margin-top:12px">Заявок пока нет.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

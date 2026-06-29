@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ============================================================ PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image, 'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ===================================================== КОНТАКТЫ + ФОРМА #}
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      {# ----- ЛЕВО: контактная информация ----- #}
+      <div class="contact-info">
+        {% if setting('address') %}
+        <div class="ci-card" data-reveal>
+          <span class="ci-ico">{{ ui.icon('map-pin') }}</span>
+          <div>
+            <div class="k">Адрес</div>
+            <div class="v">{{ setting('address') }}</div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if setting('phone') or setting('phone2') %}
+        <div class="ci-card" data-reveal data-delay="1">
+          <span class="ci-ico">{{ ui.icon('phone') }}</span>
+          <div>
+            <div class="k">Телефоны</div>
+            <div class="v">
+              {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}">{{ setting('phone') }}</a>{% endif %}
+              {% if setting('phone2') %}<br><a href="tel:{{ setting('phone2')|tel_clean }}">{{ setting('phone2') }}</a>{% endif %}
+              {% if setting('whatsapp') %}<br><a href="https://wa.me/{{ setting('whatsapp') }}" target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a>{% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if setting('email') or setting('email2') %}
+        <div class="ci-card" data-reveal data-delay="2">
+          <span class="ci-ico">{{ ui.icon('mail') }}</span>
+          <div>
+            <div class="k">E-mail</div>
+            <div class="v">
+              {% if setting('email') %}<a href="mailto:{{ setting('email') }}">{{ setting('email') }}</a>{% endif %}
+              {% if setting('email2') %}<br><a href="mailto:{{ setting('email2') }}">{{ setting('email2') }}</a>{% endif %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if setting('director_name') %}
+        <div class="ci-card" data-reveal data-delay="3">
+          <span class="ci-ico">{{ ui.icon('users') }}</span>
+          <div>
+            <div class="k">Руководитель</div>
+            <div class="v">{{ setting('director_title', 'Генеральный директор') }} — {{ setting('director_name') }}</div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if setting('work_hours') %}
+        <div class="ci-card" data-reveal data-delay="4">
+          <span class="ci-ico">{{ ui.icon('clock') }}</span>
+          <div>
+            <div class="k">Время работы</div>
+            <div class="v">{{ setting('work_hours') }}</div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      {# ----- ПРАВО: форма заявки ----- #}
+      <div class="form-card" id="contact-form" data-reveal data-delay="1">
+        <h3>Оставить заявку</h3>
+        <p>Заполните форму — наши специалисты свяжутся с вами в ближайшее рабочее время и ответят на все вопросы по сотрудничеству.</p>
+        <form method="post" action="{{ url_for('contacts') }}">
+          {{ ui.csrf() }}
+          <div class="field">
+            <label for="name">Ваше имя</label>
+            <input type="text" id="name" name="name" required placeholder="Иван Иванов">
+          </div>
+          <div class="field">
+            <label for="phone">Телефон</label>
+            <input type="text" id="phone" name="phone" placeholder="+7 (___) ___-__-__">
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="name@example.com">
+          </div>
+          <div class="field">
+            <label for="message">Сообщение</label>
+            <textarea id="message" name="message" placeholder="Кратко опишите ваш запрос или проект"></textarea>
+          </div>
+          <button class="btn btn--primary btn--lg" type="submit">{{ ui.icon('send') }} Отправить заявку</button>
+          <p style="margin-top:16px;font-size:0.88rem;color:var(--muted)">Укажите имя и телефон или e-mail, чтобы мы могли с вами связаться.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ========================================================= РЕКВИЗИТЫ #}
+{% if setting('company_bin') or setting('bank_iik') %}
+<section class="section section--soft">
+  <div class="container">
+    {% set ln = setting('legal_name') or 'ТОО «АВС-Лимитед»' %}
+    {{ ui.sec_head('Юридическая информация', 'Реквизиты компании', 'Официальные данные ' + ln + ' для договоров и оплаты.', center=true) }}
+    <div class="requisites" data-reveal>
+      {% if setting('legal_name') %}<div class="req-row"><span class="rk">Полное наименование</span><span class="rv">{{ setting('legal_name') }}</span></div>{% endif %}
+      {% if setting('company_bin') %}<div class="req-row"><span class="rk">БИН</span><span class="rv">{{ setting('company_bin') }}</span></div>{% endif %}
+      {% if setting('legal_address') %}<div class="req-row"><span class="rk">Юридический адрес</span><span class="rv">{{ setting('legal_address') }}</span></div>{% endif %}
+      {% if setting('address') %}<div class="req-row"><span class="rk">Производственная база</span><span class="rv">{{ setting('address') }}</span></div>{% endif %}
+      {% if setting('bank_name') %}<div class="req-row"><span class="rk">Банк</span><span class="rv">{{ setting('bank_name') }}</span></div>{% endif %}
+      {% if setting('bank_iik') %}<div class="req-row"><span class="rk">ИИК (расчётный счёт)</span><span class="rv">{{ setting('bank_iik') }}</span></div>{% endif %}
+      {% if setting('bank_bik') %}<div class="req-row"><span class="rk">БИК</span><span class="rv">{{ setting('bank_bik') }}</span></div>{% endif %}
+      {% if setting('bank_kbe') %}<div class="req-row"><span class="rk">Кбе</span><span class="rv">{{ setting('bank_kbe') }}</span></div>{% endif %}
+      {% if setting('director_name') %}<div class="req-row"><span class="rk">Руководитель</span><span class="rv">{{ setting('director_title', 'Директор') }} — {{ setting('director_name') }}</span></div>{% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ КАРТА #}
+{% if setting('map_embed') %}
+<section class="section section--tight">
+  <div class="container">
+    <div class="map-wrap" data-reveal>
+      <iframe src="{{ setting('map_embed') }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Карта"></iframe>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

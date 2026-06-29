@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ========================================================== PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image, 'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ======================================================= A. ВСТУПЛЕНИЕ #}
+<section class="section">
+  <div class="container">
+    <div class="split">
+      <div class="split__body" data-reveal>
+        <span class="eyebrow">Кто мы</span>
+        <h2>{{ setting('about_lead_title', 'Строим инфраструктуру, которой доверяют') }}</h2>
+        {% if page.intro %}<div class="prose">{{ page.intro|safe }}</div>{% endif %}
+        <ul class="feature-list">
+          <li><span class="fi">{{ ui.icon('shield-check') }}</span><div><strong>Надёжность</strong><span>Долгосрочные контракты с постоянными заказчиками</span></div></li>
+          <li><span class="fi">{{ ui.icon('award') }}</span><div><strong>Качество</strong><span>Соответствие международным стандартам ISO 9001</span></div></li>
+          <li><span class="fi">{{ ui.icon('users') }}</span><div><strong>Долгосрочное партнёрство</strong><span>Репутация и положительные отзывы о деятельности</span></div></li>
+          <li><span class="fi">{{ ui.icon('cpu') }}</span><div><strong>Инновации</strong><span>Постоянное внедрение современных технологий</span></div></li>
+        </ul>
+      </div>
+      <div class="split__media stack" data-reveal data-delay="1">
+        <img src="{{ media('img/image9.png') }}" alt="Производственная база компании">
+        <img src="{{ media('img/image13.jpg') }}" alt="Объект строительства">
+        <img src="{{ media('img/image3.jpg') }}" alt="Дорожное строительство">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ===================================================== B. ЦИТАТА-ДЕВИЗ #}
+{% if setting('about_quote') %}
+<section class="section section--tight section--mute">
+  <div class="container">
+    <div class="quote-box" data-reveal>
+      <span class="qmark">«</span>
+      <p>{{ setting('about_quote') }}</p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ====================================================== C. ПОКАЗАТЕЛИ #}
+{% if stats %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="stat-strip" data-reveal>
+      {% for s in stats %}
+      <div class="stat-cell">
+        <div class="stat-ico">{{ ui.icon(s.icon) }}</div>
+        <div class="stat-num">{{ s.prefix }}{% if s.value.isdigit() %}<span data-count="{{ s.value }}">0</span>{% else %}{{ s.value }}{% endif %}<span class="suf">{{ s.suffix }}</span></div>
+        <div class="stat-lbl">{{ s.label }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ===================================================== D. ПРЕИМУЩЕСТВА #}
+{% if advantages %}
+<section class="section">
+  <div class="container">
+    {{ ui.sec_head('Наши преимущества', 'Конкурентные преимущества', 'Комплексный подход, собственные ресурсы и проверенное качество на каждом этапе работ.', center=true) }}
+    <div class="grid grid-3">
+      {% for a in advantages %}
+      <div class="adv-card" data-reveal data-delay="{{ loop.index0 % 3 }}">
+        <span class="ck">{{ ui.icon(a.icon) }}</span>
+        <div><h4>{{ a.title }}</h4><p>{{ a.text }}</p></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ======================================================= E. ЛИЦЕНЗИИ #}
+{% if licenses %}
+<section class="section section--mute">
+  <div class="container">
+    {{ ui.sec_head('Гарантии качества', 'Лицензии и стандарты', 'Подтверждённый профессиональный уровень и ответственный подход к безопасности и качеству работ.', center=true) }}
+    <div class="grid grid-2">
+      {% for l in licenses %}
+      <div class="lic-card" data-reveal data-delay="{{ loop.index0 % 2 }}">
+        {% if l.image %}
+        <div class="lic-card__media"><img src="{{ media(l.image) }}" alt="{{ l.title }}" loading="lazy"></div>
+        {% endif %}
+        <div class="lic-card__body">
+          <div class="card__ico">{{ ui.icon(l.icon) }}</div>
+          <h3>{{ l.title }}</h3>
+          <p>{{ l.body }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ F. CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}Файл слишком большой — ошибка 413{% endblock %}
+{% block meta_desc %}Размер загружаемого файла превышает допустимый лимит 16 МБ.{% endblock %}
+{% block content %}
+<section class="section" style="min-height:60vh;display:grid;place-items:center;text-align:center">
+  <div class="container" style="max-width:620px" data-reveal>
+    <div style="font-size:clamp(5rem,18vw,10rem);line-height:1;color:var(--navy-800);font-family:var(--font-head);font-weight:800">413</div>
+    <span class="eyebrow">Ошибка 413</span>
+    <h1 style="margin-top:8px">Файл слишком большой</h1>
+    <p class="lead" style="margin:18px auto 0;max-width:520px">Размер загружаемого файла превышает допустимый лимит 16&nbsp;МБ. Сожмите изображение или выберите файл меньшего размера и попробуйте снова.</p>
+    <div class="btn-row" style="justify-content:center;margin-top:32px">
+      <a href="{{ url_for('home') }}" class="btn btn--primary btn--lg">{{ ui.icon('arrow-right') }} На главную</a>
+      <a href="{{ url_for('contacts') }}" class="btn btn--outline btn--lg">{{ ui.icon('phone') }} Контакты</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

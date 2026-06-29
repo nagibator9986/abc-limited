@@ -1,0 +1,47 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}Заявки с сайта{% endblock %}
+{% block heading %}Заявки с сайта{% endblock %}
+{% block crumb %}<div class="crumb">Обзор · {{ leads|length }} {{ ui.plural(leads|length, 'заявка', 'заявки', 'заявок') }}</div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ ui.icon('mail') }} Заявки</h1>
+    <p>Сообщения из формы обратной связи</p>
+  </div>
+</div>
+
+{% if not leads %}
+<div class="card-a">
+  <div class="empty-a">
+    {{ ui.icon('mail') }}
+    <p style="margin-top:12px">Заявок пока нет</p>
+  </div>
+</div>
+{% else %}
+  {% for l in leads %}
+  <div class="lead-card {{ 'unread' if not l.is_read }}">
+    <div class="lh">
+      <span class="who">{{ l.name or 'Без имени' }}</span>
+      <span class="when">{{ l.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+    </div>
+    <div class="meta">
+      {% if l.phone %}<span>{{ ui.icon('phone') }} <a href="tel:{{ l.phone|tel_clean }}">{{ l.phone }}</a></span>{% endif %}
+      {% if l.email %}<span>{{ ui.icon('mail') }} <a href="mailto:{{ l.email }}">{{ l.email }}</a></span>{% endif %}
+    </div>
+    <div class="msg">{{ l.message }}</div>
+    <div class="lf">
+      <form method="post" action="{{ url_for('admin_lead_toggle', lead_id=l.id) }}" style="display:inline">
+        {{ ui.csrf() }}
+        <button type="submit" class="btn-a ghost sm">{{ 'Пометить непрочитанной' if l.is_read else 'Пометить прочитанной' }}</button>
+      </form>
+      <form method="post" action="{{ url_for('admin_lead_delete', lead_id=l.id) }}" onsubmit="return confirm('Удалить заявку?')" style="display:inline">
+        {{ ui.csrf() }}
+        <button class="btn-a danger sm" type="submit">{{ ui.icon('x') }} Удалить</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}

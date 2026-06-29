@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ===================================================== PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image, 'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ===================================================== A) ВСТУПЛЕНИЕ #}
+{% if page.intro %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Собственная база</span>
+      <h2>Производственная независимость и контроль качества</h2>
+      <p>Полный комплекс собственных мощностей позволяет нам управлять качеством и сроками на каждом этапе строительства.</p>
+    </div>
+    <div class="prose" data-reveal data-delay="1">{{ page.intro|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# ===================================================== B) СЕТКА АКТИВОВ #}
+{% if assets %}
+<section class="section section--soft">
+  <div class="container">
+    {{ ui.sec_head('Наши мощности', 'Производственные активы', 'Заводы, установки, карьер и техника, обеспечивающие выполнение работ полного цикла.', center=true) }}
+    <div class="grid grid-2">
+      {% for a in assets %}
+      <article class="asset-card" data-reveal data-delay="{{ loop.index0 % 2 }}">
+        <div class="asset-card__media">
+          <img src="{{ media(a.image, 'img/image3.jpg') }}" alt="{{ a.title }}" loading="lazy">
+          {% if a.category %}<span class="asset-card__tag">{{ a.category }}</span>{% endif %}
+          {% if a.year %}<span class="asset-card__year">{{ a.year }}</span>{% endif %}
+        </div>
+        <div class="asset-card__body">
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.description }}</p>
+          <div class="asset-meta">
+            {% if a.location %}<div>{{ ui.icon('map-pin') }} <b>Локация:</b> {{ a.location }}</div>{% endif %}
+            {% if a.capacity %}<div>{{ ui.icon('gauge') }} <b>Мощность:</b> {{ a.capacity }}</div>{% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ===================================================== C) ЦИФРЫ ПРОИЗВОДСТВА (dark) #}
+<section class="section section--dark">
+  <div class="container">
+    {{ ui.sec_head('Производство в цифрах', 'Ключевые показатели мощностей', 'Собственные заводы и установки покрывают потребности крупных дорожных и промышленных объектов региона.', center=true) }}
+    <div class="grid grid-4">
+      <div class="hero__stat text-center" data-reveal>
+        <div class="num"><span data-count="175">0</span><span class="accent"> т/ч</span></div>
+        <div class="lbl">Асфальтобетонный завод RD 175</div>
+      </div>
+      <div class="hero__stat text-center" data-reveal data-delay="1">
+        <div class="num"><span data-count="160">0</span><span class="accent"> м³/ч</span></div>
+        <div class="lbl">Бетонно-смесительная установка</div>
+      </div>
+      <div class="hero__stat text-center" data-reveal data-delay="2">
+        <div class="num"><span data-count="40">0</span><span class="accent"> млн м³</span></div>
+        <div class="lbl">Запасы карьера ПГС</div>
+      </div>
+      <div class="hero__stat text-center" data-reveal data-delay="3">
+        <div class="num"><span data-count="50">0</span><span class="accent"> 000 м³</span></div>
+        <div class="lbl">Резервуары «под ключ»</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ===================================================== D) CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}Аккаунт и безопасность{% endblock %}
+{% block heading %}Безопасность{% endblock %}
+{% block crumb %}<div class="crumb">Сайт · Аккаунт и безопасность</div>{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ ui.icon('shield') }} Аккаунт и безопасность</h1>
+    <p>Данные вашей учётной записи и смена пароля для входа в панель управления.</p>
+  </div>
+</div>
+
+<div class="card-a" style="margin-bottom:24px">
+  <div class="card-a__head">
+    <h2>{{ ui.icon('shield') }} Текущий пользователь</h2>
+  </div>
+  <div class="card-a__body">
+    <div class="form-a">
+      <div class="form-grid-2">
+        <div class="fld">
+          <label for="acc_username">Логин</label>
+          <input type="text" id="acc_username" value="{{ user.username }}" readonly>
+        </div>
+        <div class="fld">
+          <label for="acc_fullname">Имя</label>
+          <input type="text" id="acc_fullname" value="{{ user.full_name or '—' }}" readonly>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-a">
+  <div class="card-a__head">
+    <h2>{{ ui.icon('settings') }} Смена пароля</h2>
+  </div>
+  <div class="card-a__body">
+    <form method="post" action="{{ url_for('admin_account') }}" class="form-a">
+      {{ ui.csrf() }}
+      <div class="fld">
+        <label for="acc_current">Текущий пароль</label>
+        <input type="password" id="acc_current" name="current" autocomplete="current-password" required>
+      </div>
+      <div class="fld">
+        <label for="acc_new">Новый пароль <span class="hint">— минимум 5 символов</span></label>
+        <input type="password" id="acc_new" name="new" autocomplete="new-password" minlength="5" required>
+        <span class="hint">Используйте не менее 5 символов. Желательно сочетание букв и цифр.</span>
+      </div>
+      <div class="fld">
+        <label for="acc_confirm">Подтвердите новый пароль</label>
+        <input type="password" id="acc_confirm" name="confirm" autocomplete="new-password" minlength="5" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-a primary">{{ ui.icon('check') }} Изменить пароль</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

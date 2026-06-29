@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+{% block content %}
+
+{# ============================================================ PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image,'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ============================================================ A) ВСТУПЛЕНИЕ #}
+{% if page.intro %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Виды деятельности</span>
+      <h2>Полный цикл строительных и инфраструктурных работ</h2>
+    </div>
+    <div class="prose" data-reveal data-delay="1">{{ page.intro|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# ====================================================== B) ПЕРЕЧЕНЬ НАПРАВЛЕНИЙ #}
+{% for s in services %}
+<section class="section{{ ' section--soft' if loop.index0 % 2 }}">
+  <div class="container">
+    <div class="split {{ 'split--rev' if loop.index0 % 2 }}" data-reveal>
+      <div class="split__media">
+        <img src="{{ media(s.image,'img/image3.jpg') }}" alt="{{ s.title }}" loading="lazy">
+      </div>
+      <div class="split__body" data-reveal data-delay="1">
+        <span class="badge-soft">{{ ui.icon(s.icon) }} Направление {{ '%02d'|format(loop.index) }}</span>
+        <h2 style="margin-top:18px">{{ s.title }}</h2>
+        <p>{{ s.description }}</p>
+        {% if s.item_list %}
+        <ul class="svc-list" style="margin-top:22px">
+          {% for it in s.item_list %}
+          <li>{{ ui.icon('check-circle') }}<span>{{ it }}</span></li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{# ============================================================ C) ЗАКЛЮЧЕНИЕ #}
+{% if page.body %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="prose" data-reveal>{{ page.body|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ D) CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
