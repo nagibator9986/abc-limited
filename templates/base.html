@@ -81,7 +81,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        {% if setting('logo') %}<img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name') }}">{% endif %}
+        {% if setting('logo_light') or setting('logo') %}<img src="{{ media(setting('logo_light') or setting('logo')) }}" alt="{{ setting('brand_name') }}">{% endif %}
         <p>{{ setting('footer_about', setting('site_description')) }}</p>
       </div>
       <div class="foot-col">

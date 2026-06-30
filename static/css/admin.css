@@ -68,7 +68,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   display: flex; flex-direction: column; overflow-y: auto;
 }
 .sidebar__brand { padding: 22px 22px 18px; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; gap: 12px; align-items: center; }
-.sidebar__brand img { height: 40px; background: #fff; padding: 5px 8px; border-radius: 8px; }
+.sidebar__brand img { height: 42px; width: auto; }
 .sidebar__brand .t strong { display: block; font-family: var(--a-head); color: #fff; font-size: .98rem; font-weight: 700; }
 .sidebar__brand .t span { font-size: .72rem; color: rgba(255,255,255,.55); }
 .nav-group { padding: 16px 14px; }

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block meta_desc %}{{ page.meta_description }}{% endblock %}
+
+{% block content %}
+{# ========================================================== PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(page.hero_image,'img/image3.jpg') }}" alt="{{ page.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки"><a href="{{ url_for('home') }}">Главная</a><span>/</span>{{ page.menu_label or page.title }}</nav>
+    {% if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
+  </div>
+</section>
+
+{# ========================================================== ВСТУПЛЕНИЕ #}
+{% if page.intro %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head center" data-reveal>
+      <span class="eyebrow">Сотрудничество</span>
+      <h2>Нам доверяют лидеры отрасли</h2>
+    </div>
+    <div class="prose" style="max-width:820px;margin:0 auto;text-align:center" data-reveal data-delay="1">{{ page.intro|safe }}</div>
+  </div>
+</section>
+{% endif %}
+
+{# =================================================== КЛЮЧЕВОЙ ПАРТНЁР (ТШО) #}
+{% for f in featured %}
+<section class="section section--soft">
+  <div class="container">
+    <div class="split {{ 'split--rev' if loop.index0 % 2 }}">
+      <div class="split__media" data-reveal>
+        <img src="{{ media(f.image,'img/image38.jpg') }}" alt="{{ f.title }}">
+      </div>
+      <div class="split__body" data-reveal data-delay="1">
+        <span class="badge-soft">{{ ui.icon('award') }} {{ f.category or 'Ключевой партнёр' }}</span>
+        <h2>{{ f.title }}</h2>
+        <p>{{ f.description }}</p>
+        {% if f.url %}
+        <div class="btn-row" style="margin-top:26px">
+          <a href="{{ f.url }}" target="_blank" rel="noopener" class="btn btn--outline">Сайт партнёра {{ ui.icon('arrow-right') }}</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endfor %}
+
+{# ========================================================== ВСЕ ПАРТНЁРЫ #}
+{% set rest = items | rejectattr('is_featured') | list %}
+{% if rest %}
+<section class="section">
+  <div class="container">
+    {{ ui.sec_head('Заказчики и партнёры', 'С кем мы работаем', 'Предприятия нефтегазовой отрасли, государственные учреждения и социальные фонды Прикаспийского региона.', center=true) }}
+    <div class="grid grid-3">
+      {% for p in rest %}
+      <article class="card card--accent" data-reveal data-delay="{{ loop.index0 % 3 }}">
+        <div class="card__ico">{{ ui.icon('briefcase') }}</div>
+        {% if p.category %}<span class="badge-soft" style="margin-bottom:14px">{{ p.category }}</span>{% endif %}
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.description }}</p>
+        {% if p.url %}<a href="{{ p.url }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-family:var(--font-head);font-weight:600;color:var(--navy-700)">Сайт {{ ui.icon('arrow-right') }}</a>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if not items %}
+<section class="section">
+  <div class="container">
+    <div class="empty" data-reveal>{{ ui.icon('users') }}<p style="margin-top:12px">Раздел партнёров скоро будет наполнен.</p></div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Станьте нашим партнёром') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Связаться с нами</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

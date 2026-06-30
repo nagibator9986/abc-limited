@@ -211,15 +211,18 @@ class Task(db.Model):
 
 
 # --------------------------------------------------------------------------- #
-#  «Расширяем границы» — привлечённые мегапроекты / партнёрства
+#  Наши партнёры (заказчики и партнёры компании)
 # --------------------------------------------------------------------------- #
-class ExpansionItem(db.Model):
-    __tablename__ = "expansion_items"
+class Partner(db.Model):
+    __tablename__ = "partners"
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), default="")
+    title = db.Column(db.String(200), default="")        # название организации
+    category = db.Column(db.String(120), default="")     # «Заказчик», «Партнёр» и т.п.
     description = db.Column(db.Text, default="")
-    image = db.Column(db.String(200), default="")
+    image = db.Column(db.String(200), default="")        # логотип / фото
+    url = db.Column(db.String(255), default="")          # сайт партнёра
+    is_featured = db.Column(db.Boolean, default=False)
     sort_order = db.Column(db.Integer, default=0)
     is_active = db.Column(db.Boolean, default=True)
 

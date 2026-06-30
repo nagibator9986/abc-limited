@@ -31,15 +31,23 @@
         </div>
         {% endif %}
 
-        {% if setting('phone') or setting('phone2') %}
+        {% if setting('phones') or setting('phone') %}
         <div class="ci-card" data-reveal data-delay="1">
           <span class="ci-ico">{{ ui.icon('phone') }}</span>
           <div>
             <div class="k">Телефоны</div>
-            <div class="v">
-              {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}">{{ setting('phone') }}</a>{% endif %}
-              {% if setting('phone2') %}<br><a href="tel:{{ setting('phone2')|tel_clean }}">{{ setting('phone2') }}</a>{% endif %}
-              {% if setting('whatsapp') %}<br><a href="https://wa.me/{{ setting('whatsapp') }}" target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a>{% endif %}
+            <div class="v phones-list">
+              {% if setting('phones') %}
+                {% for line in setting('phones').splitlines() %}
+                  {% set parts = line.split('|') %}
+                  {% set num = parts[0]|trim %}
+                  {% set label = (parts[1]|trim) if parts|length > 1 else '' %}
+                  {% if num %}<div class="ph-row"><a href="tel:{{ num|tel_clean }}">{{ num }}</a>{% if label %}<span class="ph-label">{{ label }}</span>{% endif %}</div>{% endif %}
+                {% endfor %}
+              {% elif setting('phone') %}
+                <div class="ph-row"><a href="tel:{{ setting('phone')|tel_clean }}">{{ setting('phone') }}</a></div>
+              {% endif %}
+              {% if setting('whatsapp') %}<div class="ph-row"><a href="https://wa.me/{{ setting('whatsapp') }}" target="_blank" rel="noopener">{{ ui.icon('whatsapp') }} WhatsApp</a></div>{% endif %}
             </div>
           </div>
         </div>
@@ -119,7 +127,6 @@
       {% if setting('legal_name') %}<div class="req-row"><span class="rk">Полное наименование</span><span class="rv">{{ setting('legal_name') }}</span></div>{% endif %}
       {% if setting('company_bin') %}<div class="req-row"><span class="rk">БИН</span><span class="rv">{{ setting('company_bin') }}</span></div>{% endif %}
       {% if setting('legal_address') %}<div class="req-row"><span class="rk">Юридический адрес</span><span class="rv">{{ setting('legal_address') }}</span></div>{% endif %}
-      {% if setting('address') %}<div class="req-row"><span class="rk">Производственная база</span><span class="rv">{{ setting('address') }}</span></div>{% endif %}
       {% if setting('bank_name') %}<div class="req-row"><span class="rk">Банк</span><span class="rv">{{ setting('bank_name') }}</span></div>{% endif %}
       {% if setting('bank_iik') %}<div class="req-row"><span class="rk">ИИК (расчётный счёт)</span><span class="rv">{{ setting('bank_iik') }}</span></div>{% endif %}
       {% if setting('bank_bik') %}<div class="req-row"><span class="rk">БИК</span><span class="rv">{{ setting('bank_bik') }}</span></div>{% endif %}

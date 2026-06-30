@@ -16,7 +16,7 @@
 <div class="admin-shell" id="adminShell">
   <aside class="sidebar">
     <a href="{{ url_for('admin_dashboard') }}" class="sidebar__brand">
-      {% if setting('logo') %}<img src="{{ media(setting('logo')) }}" alt="{{ setting('brand_name', 'ТОО «АВС-Лимитед»') }}">{% endif %}
+      {% if setting('logo_light') or setting('logo') %}<img src="{{ media(setting('logo_light') or setting('logo')) }}" alt="{{ setting('brand_name', 'ТОО «АВС-Лимитед»') }}">{% endif %}
       <span class="t"><strong>{{ setting('brand_short', 'АВС-Лимитед') }}</strong><span>Панель управления</span></span>
     </a>
 

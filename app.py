@@ -25,8 +25,8 @@ from markupsafe import Markup, escape
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from models import (
-    AdminUser, Advantage, Asset, db, Equipment, ExpansionItem, Lead,
-    License, Page, Project, Service, Setting, Stat, Task, Testimonial,
+    AdminUser, Advantage, Asset, db, Equipment, Lead,
+    License, Page, Partner, Project, Service, Setting, Stat, Task, Testimonial,
 )
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -243,7 +243,7 @@ PAGE_ENDPOINTS = {
     "equipment": "equipment",
     "projects": "projects",
     "tasks": "tasks",
-    "expansion": "expansion",
+    "partners": "partners",
     "testimonials": "testimonials",
     "contacts": "contacts",
 }
@@ -360,18 +360,27 @@ def projects():
 def tasks():
     page = get_published_page("tasks")
     items = Task.query.filter_by(is_active=True).order_by(Task.sort_order).all()
-    return render_template("tasks.html", page=page, tasks=items)
-
-
-@app.route("/razvitie", endpoint="expansion")
-def expansion():
-    page = get_published_page("expansion")
-    items = (
-        ExpansionItem.query.filter_by(is_active=True)
-        .order_by(ExpansionItem.sort_order)
+    equipment = (
+        Equipment.query.filter_by(is_active=True)
+        .order_by(Equipment.sort_order, Equipment.num)
         .all()
     )
-    return render_template("expansion.html", page=page, items=items)
+    total_units = sum(e.qty or 0 for e in equipment)
+    return render_template(
+        "tasks.html", page=page, tasks=items, equipment=equipment, total_units=total_units
+    )
+
+
+@app.route("/partnery", endpoint="partners")
+def partners():
+    page = get_published_page("partners")
+    items = (
+        Partner.query.filter_by(is_active=True)
+        .order_by(Partner.sort_order)
+        .all()
+    )
+    featured = [p for p in items if p.is_featured]
+    return render_template("partners.html", page=page, items=items, featured=featured)
 
 
 @app.route("/blagodarnosti", endpoint="testimonials")
@@ -546,6 +555,7 @@ def admin_dashboard():
         "advantages": Advantage.query.count(),
         "licenses": License.query.count(),
         "tasks": Task.query.count(),
+        "partners": Partner.query.count(),
         "testimonials": Testimonial.query.count(),
         "stats": Stat.query.count(),
         "leads": Lead.query.count(),
@@ -793,14 +803,17 @@ ADMIN_REGISTRY = {
             F("is_active", "Активно", "bool"),
         ],
     },
-    "expansion": {
-        "model": ExpansionItem, "title": "Расширяем границы", "singular": "проект", "icon": "globe",
-        "order_by": ExpansionItem.sort_order,
-        "list_display": ["title", "sort_order", "is_active"],
+    "partners": {
+        "model": Partner, "title": "Наши партнёры", "singular": "партнёра", "icon": "users",
+        "order_by": Partner.sort_order,
+        "list_display": ["title", "category", "is_featured", "sort_order", "is_active"],
         "fields": [
-            F("title", "Название", "text"),
-            F("description", "Описание", "textarea"),
-            F("image", "Изображение", "image"),
+            F("title", "Название организации", "text"),
+            F("category", "Тип (Заказчик / Партнёр)", "text"),
+            F("description", "Описание сотрудничества", "textarea"),
+            F("image", "Логотип / фото", "image"),
+            F("url", "Сайт (необязательно)", "text"),
+            F("is_featured", "Ключевой партнёр", "bool"),
             F("sort_order", "Порядок", "number"),
             F("is_active", "Активно", "bool"),
         ],

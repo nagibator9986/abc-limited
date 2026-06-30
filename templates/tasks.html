@@ -20,9 +20,9 @@
 <section class="section">
   <div class="container">
     <div class="sec-head" data-reveal>
-      <span class="eyebrow">Перспективные направления</span>
-      <h2>Задачи, над которыми мы работаем сегодня</h2>
-      <p>Приоритетные объекты и направления развития компании на текущий период.</p>
+      <span class="eyebrow">В работе сейчас</span>
+      <h2>Объекты, над которыми мы работаем сегодня</h2>
+      <p>Приоритетные объекты компании на текущий период.</p>
     </div>
     <div class="prose" data-reveal data-delay="1">{{ page.intro|safe }}</div>
   </div>
@@ -38,7 +38,7 @@
       <div class="task-card" data-reveal>
         <div class="task-card__media"><img src="{{ media(t.image, 'img/image39.jpg') }}" alt="{{ t.title }}" loading="lazy"></div>
         <div class="task-card__body">
-          <span class="task-tag">Актуальная задача</span>
+          <span class="task-tag">Текущий объект</span>
           <h3>{{ t.title }}</h3>
           {% if t.object_name %}<div class="task-field"><div class="k">Объект</div><div class="v">{{ t.object_name }}</div></div>{% endif %}
           {% if t.customer %}<div class="task-field"><div class="k">Заказчик</div><div class="v">{{ t.customer }}</div></div>{% endif %}
@@ -52,8 +52,42 @@
 </section>
 {% endif %}
 
+{# ============================================ ЗАДЕЙСТВОВАННАЯ СПЕЦТЕХНИКА #}
+{% if equipment %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Ресурсы</span>
+      <h2>Задействованная спецтехника</h2>
+      <p>Для выполнения текущих работ компания использует собственный парк машин и оборудования — {{ total_units }}&nbsp;ед. техники.</p>
+    </div>
+    <div class="table-wrap" data-reveal>
+      <table class="eq">
+        <thead>
+          <tr><th>№</th><th>Наименование техники</th><th>Год выпуска</th><th>Категория / масса</th><th>Кол-во</th></tr>
+        </thead>
+        <tbody>
+          {% for i in equipment %}
+          <tr>
+            <td class="num">{{ i.num }}</td>
+            <td class="name">{{ i.name }}</td>
+            <td>{{ i.year }}</td>
+            <td><span class="pill">{{ i.spec }}</span></td>
+            <td><span class="qty">{{ i.qty }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center" style="margin-top:36px" data-reveal>
+      <a href="{{ url_for('equipment') }}" class="btn btn--outline btn--lg">Весь парк техники {{ ui.icon('arrow-right') }}</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {# ============================================================ CTA #}
-<section class="section section--tight">
+<section class="section section--tight section--soft">
   <div class="container">
     <div class="cta-band" data-reveal>
       <div class="cta-band__inner">
