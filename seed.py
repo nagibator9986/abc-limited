@@ -562,20 +562,20 @@ PARTNERS = [
 ]
 
 
+# Официальные благодарственные и рекомендательные письма (предоставлены заказчиком).
 TESTIMONIALS = [
-    dict(title="Благодарственное письмо ТОО «Тенгизшевройл»", author="", image=IMG("image55.jpg"), sort_order=0),
-    dict(title="Благодарственное письмо", author="", image=IMG("image53.jpg"), sort_order=1),
-    dict(title="Благодарственное письмо", author="", image=IMG("image54.jpg"), sort_order=2),
-    dict(title="Благодарственное письмо", author="", image=IMG("image56.jpg"), sort_order=3),
-    dict(title="Благодарственное письмо", author="", image=IMG("image58.jpg"), sort_order=4),
-    dict(title="Благодарственное письмо", author="", image=IMG("image59.jpg"), sort_order=5),
-    dict(title="Благодарственное письмо", author="", image=IMG("image60.jpg"), sort_order=6),
-    dict(title="Благодарственное письмо", author="", image=IMG("image61.jpg"), sort_order=7),
-    dict(title="Благодарственное письмо", author="", image=IMG("image62.jpg"), sort_order=8),
-    dict(title="Благодарственное письмо", author="", image=IMG("image63.jpg"), sort_order=9),
-    dict(title="Сертификат / благодарность", author="", image=IMG("image64.png"), sort_order=10),
-    dict(title="Сертификат / благодарность", author="", image=IMG("image65.png"), sort_order=11),
-    dict(title="Сертификат / благодарность", author="", image=IMG("image66.png"), sort_order=12),
+    dict(title="Благодарственное письмо — Центральный стадион в г. Кульсары",
+         author="ТОО «Тенгизшевройл»", image=IMG("letter_tsho_stadion.jpg"), sort_order=0),
+    dict(title="Благодарственное письмо — Футбольные поля",
+         author="ТОО «Тенгизшевройл»", image=IMG("letter_tsho_football.jpg"), sort_order=1),
+    dict(title="Благодарственное письмо — Строительство школы",
+         author="ТОО «Тенгизшевройл»", image=IMG("letter_tsho_school.jpg"), sort_order=2),
+    dict(title="Благодарственное письмо — Детский сад",
+         author="ТОО «Тенгизшевройл»", image=IMG("letter_tsho_ds.jpg"), sort_order=3),
+    dict(title="Благодарственное письмо — Расчистка реки Курсай",
+         author="ТОО «Тенгизшевройл»", image=IMG("letter_tsho_kursai.jpg"), sort_order=4),
+    dict(title="Рекомендательное письмо — дорога к площадкам GE4/GE5",
+         author="North Caspian Operating Company (NCOC)", image=IMG("letter_ncoc.jpg"), sort_order=5),
 ]
 
 
