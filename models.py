@@ -186,10 +186,28 @@ class Project(db.Model):
     period = db.Column(db.String(80), default="")      # годы реализации
     category = db.Column(db.String(80), default="Дороги")
     location = db.Column(db.String(160), default="")
-    image = db.Column(db.String(200), default="")
+    image = db.Column(db.String(200), default="")            # главное изображение
+    gallery = db.Column(db.Text, default="")                 # галерея: по одному пути в строке (можно «путь | подпись»)
+    video = db.Column(db.String(200), default="")            # видео объекта (путь, напр. video/xxx.mp4)
+    video_poster = db.Column(db.String(200), default="")     # постер (кадр) для видео
     is_featured = db.Column(db.Boolean, default=False)
     sort_order = db.Column(db.Integer, default=0)
     is_active = db.Column(db.Boolean, default=True)
+
+    @property
+    def gallery_items(self):
+        """Галерея → список {src, caption}. Формат строки: «путь» или «путь | подпись»."""
+        items = []
+        for line in (self.gallery or "").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if "|" in line:
+                src, caption = line.split("|", 1)
+                items.append({"src": src.strip(), "caption": caption.strip()})
+            else:
+                items.append({"src": line, "caption": ""})
+        return items
 
 
 # --------------------------------------------------------------------------- #

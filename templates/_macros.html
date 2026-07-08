@@ -62,15 +62,21 @@
 {# ====================================================== КАРТОЧКА ПРОЕКТА #}
 {%- macro project_card(p, media) -%}
 <article class="proj-card" data-cat="{{ p.category }}" data-reveal>
-  <img src="{{ media(p.image, 'img/image3.jpg') }}" alt="{{ p.title }}" loading="lazy">
-  {% if p.category %}<span class="proj-card__cat">{{ p.category }}</span>{% endif %}
-  <div class="proj-card__body">
-    <h3>{{ p.title }}</h3>
-    <div class="proj-card__meta">
-      {% if p.client %}<span>{{ icon('briefcase') }}{{ p.client }}</span>{% endif %}
-      {% if p.period %}<span>{{ icon('calendar') }}{{ p.period }}</span>{% endif %}
-    </div>
-  </div>
+  <a class="proj-card__link" href="{{ url_for('project_detail', proj_id=p.id) }}" aria-label="{{ p.title }} — подробнее">
+    <span class="proj-card__media">
+      <img src="{{ media(p.image, 'img/image3.jpg') }}" alt="{{ p.title }}" loading="lazy">
+      {% if p.video %}<span class="proj-card__badge">{{ icon('play') }} Видео</span>{% endif %}
+    </span>
+    {% if p.category %}<span class="proj-card__cat">{{ p.category }}</span>{% endif %}
+    <span class="proj-card__body">
+      <h3>{{ p.title }}</h3>
+      <span class="proj-card__meta">
+        {% if p.client %}<span>{{ icon('briefcase') }}{{ p.client }}</span>{% endif %}
+        {% if p.period %}<span>{{ icon('calendar') }}{{ p.period }}</span>{% endif %}
+      </span>
+      <span class="proj-card__more">Подробнее {{ icon('arrow-right') }}</span>
+    </span>
+  </a>
 </article>
 {%- endmacro -%}
 

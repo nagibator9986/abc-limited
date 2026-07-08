@@ -235,3 +235,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .table-a th.hide-sm, .table-a td.hide-sm { display: none; }
   .topbar-a { padding: 0 16px; }
 }
+
+/* превью галереи проекта в форме */
+.gallery-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.gallery-thumbs img { width: 92px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid var(--a-line, #e2e8f0); }

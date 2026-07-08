@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui with context %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block meta_desc %}{{ project.description|striptags|truncate(160) if project.description else project.title }}{% endblock %}
+
+{% block content %}
+{# ============================================================ PAGE HERO #}
+<section class="page-hero">
+  <div class="page-hero__bg"><img src="{{ media(project.image, 'img/image3.jpg') }}" alt="{{ project.title }}"></div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Хлебные крошки">
+      <a href="{{ url_for('home') }}">Главная</a><span>/</span>
+      <a href="{{ url_for('projects') }}">Проекты</a><span>/</span>{{ project.title|truncate(48) }}
+    </nav>
+    {% if project.category %}<span class="eyebrow">{{ project.category }}</span>{% endif %}
+    <h1>{{ project.title }}</h1>
+  </div>
+</section>
+
+{# ================================================ ОБЗОР: факты + описание #}
+<section class="section">
+  <div class="container">
+    <div class="proj-detail">
+      <div class="proj-detail__main">
+        {% if project.description %}
+          <div class="prose" data-reveal>{{ project.description|paragraphs }}</div>
+        {% else %}
+          <p class="prose" data-reveal>Подробное описание объекта скоро будет добавлено.</p>
+        {% endif %}
+      </div>
+
+      <aside class="proj-detail__facts" data-reveal data-delay="1">
+        <h2 class="proj-facts__title">Об объекте</h2>
+        <dl class="proj-facts">
+          {% if project.client %}<div><dt>{{ ui.icon('briefcase') }} Заказчик</dt><dd>{{ project.client }}</dd></div>{% endif %}
+          {% if project.period %}<div><dt>{{ ui.icon('calendar') }} Годы реализации</dt><dd>{{ project.period }}</dd></div>{% endif %}
+          {% if project.location %}<div><dt>{{ ui.icon('map-pin') }} Локация</dt><dd>{{ project.location }}</dd></div>{% endif %}
+          {% if project.category %}<div><dt>{{ ui.icon('layers') }} Направление</dt><dd>{{ project.category }}</dd></div>{% endif %}
+        </dl>
+        <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--block">{{ ui.icon('send') }} Обсудить похожий проект</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+{# ==================================================================== ВИДЕО #}
+{% if project.video %}
+<section class="section section--soft">
+  <div class="container">
+    {{ ui.sec_head('Видео объекта', 'Как выглядит готовый объект', center=true) }}
+    <div class="video-wrap" data-reveal>
+      <video controls preload="none" playsinline
+             poster="{{ media(project.video_poster) if project.video_poster else media(project.image) }}">
+        {# type не указываем намеренно: галерея допускает mp4/webm/ogg/mov — пусть браузер определит сам #}
+        <source src="{{ media(project.video) }}">
+        Ваш браузер не поддерживает встроенное видео.
+        <a href="{{ media(project.video) }}">Скачать видео</a>.
+      </video>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================== ГАЛЕРЕЯ #}
+{% if project.gallery_items %}
+<section class="section{% if not project.video %} section--soft{% endif %}">
+  <div class="container">
+    {{ ui.sec_head('Фотогалерея', 'Фотографии объекта', 'Нажмите на фото, чтобы открыть в полном размере.', center=true) }}
+    <div class="gallery" data-reveal>
+      {% for g in project.gallery_items %}
+      <a class="g-item" href="{{ media(g.src) }}" data-lightbox="{{ media(g.src) }}" data-caption="{{ g.caption or project.title }}">
+        <img src="{{ media(g.src) }}" alt="{{ g.caption or project.title }}" loading="lazy">
+        {% if g.caption %}<span class="g-cap">{{ g.caption }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ============================================================ ДРУГИЕ ПРОЕКТЫ #}
+{% if related %}
+<section class="section section--tight">
+  <div class="container">
+    {{ ui.sec_head('Смотрите также', 'Другие объекты направления «' ~ (project.category or '') ~ '»') }}
+    <div class="grid grid-3">
+      {% for p in related %}{{ ui.project_card(p, media) }}{% endfor %}
+    </div>
+    <div class="center" style="margin-top:36px">
+      <a href="{{ url_for('projects') }}" class="btn btn--ghost btn--lg">{{ ui.icon('briefcase') }} Все проекты</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================== CTA #}
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band" data-reveal>
+      <div class="cta-band__inner">
+        <div>
+          <h2>{{ setting('cta_title', 'Готовы обсудить ваш проект?') }}</h2>
+          {% if setting('cta_text') %}<p>{{ setting('cta_text') }}</p>{% endif %}
+        </div>
+        <div class="btn-row">
+          <a href="{{ url_for('contacts') }}" class="btn btn--primary btn--lg">{{ ui.icon('send') }} Оставить заявку</a>
+          {% if setting('phone') %}<a href="tel:{{ setting('phone')|tel_clean }}" class="btn btn--ghost btn--lg">{{ ui.icon('phone') }} {{ setting('phone') }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -24,6 +24,8 @@ static/uploads/*
 # Исходники для генерации (не нужны на хостинге; изображения уже в static/img)
 extracted_media/
 *.pptx
+# Исходные медиа от заказчика (HEIC/MP4/PDF) — уже сконвертированы в static/
+additional-assets/
 
 # Системное
 .DS_Store

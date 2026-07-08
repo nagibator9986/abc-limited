@@ -67,6 +67,37 @@
                 </div>
               </div>
 
+            {% elif f.type == 'gallery' %}
+              <textarea id="f_{{ f.name }}" name="{{ f.name }}" class="tall">{{ val or '' }}</textarea>
+              <div class="file-input" style="margin-top:10px">
+                <input type="file" name="file_{{ f.name }}" accept="image/*" multiple>
+              </div>
+              <span class="hint">По одному пути в строке (напр. <code>img/foto.jpg</code>). Можно добавить подпись: <code>путь | подпись</code>. Загруженные файлы добавятся в конец списка.</span>
+              {% if obj.gallery_items %}
+              <div class="gallery-thumbs">
+                {% for g in obj.gallery_items %}<img src="{{ media(g.src) }}" alt="" title="{{ g.caption }}" loading="lazy">{% endfor %}
+              </div>
+              {% endif %}
+
+            {% elif f.type == 'video' %}
+              <div class="img-field">
+                {% if val %}
+                  <video src="{{ media(val) }}" class="preview" controls preload="none" style="background:#000"></video>
+                {% else %}
+                  <div class="preview empty">{{ ui.icon('play') }}</div>
+                {% endif %}
+                <div class="controls">
+                  <div class="file-input">
+                    <input type="file" name="file_{{ f.name }}" accept="video/*">
+                  </div>
+                  <input type="text" name="{{ f.name }}" value="{{ val or '' }}" placeholder="или путь: video/xxx.mp4">
+                  {% if val %}
+                  <label class="clear-check"><input type="checkbox" name="clear_{{ f.name }}"> {{ ui.icon('x') }} Удалить видео</label>
+                  {% endif %}
+                </div>
+              </div>
+              <span class="hint">Загрузите короткий MP4/WebM (до 64 МБ) или укажите путь к файлу в static.</span>
+
             {% else %}
               <input type="text" id="f_{{ f.name }}" name="{{ f.name }}" value="{{ val or '' }}" {{ 'readonly' if f.readonly }}>
             {% endif %}

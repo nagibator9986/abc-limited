@@ -64,7 +64,7 @@ app.config.update(
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_ENGINE_OPTIONS={"pool_pre_ping": True},
     UPLOAD_FOLDER=UPLOAD_DIR,
-    MAX_CONTENT_LENGTH=16 * 1024 * 1024,  # 16 МБ на загрузку
+    MAX_CONTENT_LENGTH=64 * 1024 * 1024,  # 64 МБ на загрузку (изображения и короткие видео)
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
     # Secure-cookie автоматически на хостинге за HTTPS (или при ABS_HTTPS=1).
@@ -76,6 +76,8 @@ if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
 
 # SVG исключён намеренно: может содержать исполняемый скрипт (хранимый XSS).
 ALLOWED_EXT = {"png", "jpg", "jpeg", "gif", "webp"}
+# Видео для галерей проектов (загружаются через админку, отдаются как обычные файлы).
+ALLOWED_VIDEO_EXT = {"mp4", "webm", "ogg", "mov", "m4v"}
 
 db.init_app(app)
 
@@ -131,15 +133,15 @@ def get_published_page(slug):
     return page
 
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXT
+def allowed_file(filename, allowed=ALLOWED_EXT):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed
 
 
-def save_upload(file_storage):
+def save_upload(file_storage, allowed=ALLOWED_EXT):
     """Сохраняет загруженный файл в каталог данных, возвращает путь 'uploads/<имя>'."""
     if not file_storage or not file_storage.filename:
         return None
-    if not allowed_file(file_storage.filename):
+    if not allowed_file(file_storage.filename, allowed):
         return None
     ext = file_storage.filename.rsplit(".", 1)[1].lower()
     name = f"{uuid.uuid4().hex}.{ext}"
@@ -354,6 +356,24 @@ def projects():
     return render_template(
         "projects.html", page=page, projects=items, categories=categories
     )
+
+
+@app.route("/proekty/<int:proj_id>", endpoint="project_detail")
+def project_detail(proj_id):
+    project = Project.query.filter_by(id=proj_id, is_active=True).first()
+    if not project:
+        abort(404)
+    related = (
+        Project.query.filter(
+            Project.is_active == True,  # noqa: E712
+            Project.category == project.category,
+            Project.id != project.id,
+        )
+        .order_by(Project.sort_order)
+        .limit(3)
+        .all()
+    )
+    return render_template("project_detail.html", page=get_page("projects"), project=project, related=related)
 
 
 @app.route("/zadachi", endpoint="tasks")
@@ -781,7 +801,10 @@ ADMIN_REGISTRY = {
             F("period", "Годы реализации", "text"),
             F("category", "Категория", "text"),
             F("location", "Локация", "text"),
-            F("image", "Изображение", "image"),
+            F("image", "Главное изображение", "image"),
+            F("gallery", "Галерея (фото объекта)", "gallery"),
+            F("video", "Видео объекта", "video"),
+            F("video_poster", "Постер (обложка видео)", "image"),
             F("is_featured", "Избранный (на главной)", "bool"),
             F("sort_order", "Порядок", "number"),
             F("is_active", "Активно", "bool"),
@@ -867,6 +890,25 @@ def _apply_fields(obj, cfg):
                 pass  # некорректное число игнорируем, не обнуляем
         elif ftype == "image":
             up = save_upload(request.files.get(f"file_{name}"))
+            if up:
+                setattr(obj, name, up)
+            elif request.form.get(f"clear_{name}"):
+                setattr(obj, name, "")
+            elif f"{name}" in request.form:
+                setattr(obj, name, request.form.get(name, "").strip())
+        elif ftype == "gallery":
+            uploaded = [u for u in (save_upload(f) for f in request.files.getlist(f"file_{name}")) if u]
+            if name in request.form:
+                # текстовое поле пришло — оно источник истины (+ добавленные загрузки в конец)
+                lines = [ln.strip() for ln in request.form.get(name, "").splitlines() if ln.strip()]
+                setattr(obj, name, "\n".join(lines + uploaded))
+            elif uploaded:
+                # поля нет, но есть загрузки — дополняем существующую галерею, не затирая её
+                existing = [ln.strip() for ln in (getattr(obj, name) or "").splitlines() if ln.strip()]
+                setattr(obj, name, "\n".join(existing + uploaded))
+            # ни текста, ни загрузок — поле не трогаем
+        elif ftype == "video":
+            up = save_upload(request.files.get(f"file_{name}"), ALLOWED_VIDEO_EXT)
             if up:
                 setattr(obj, name, up)
             elif request.form.get(f"clear_{name}"):
