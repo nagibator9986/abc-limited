@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+{% block title %}Брендбук{% endblock %}
+{% block meta_desc %}Правила использования фирменного стиля ТОО «АВС-Лимитед» — логотип, цвета, типографика, охранная зона, применение.{% endblock %}
+
+{% block head %}
+<style>
+  /* ─── Brandbook — self-contained tokens, isolated from site chrome ─── */
+  .bb {
+    --bb-navy:      #1a2f5c;
+    --bb-navy-900:  #12213f;
+    --bb-red:       #c8302d;
+    --bb-red-alt:   #e31e24;
+    --bb-gray:      #7a7f87;
+    --bb-ink:       #0f172a;
+    --bb-muted:     #64748b;
+    --bb-hair:      #e5e7eb;
+    --bb-surface:   #f5f6f9;
+    --bb-tint:      #eef1f6;
+    --bb-danger:    #dc2626;
+    --bb-radius:    16px;
+
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--bb-ink);
+    background: #fbfbfd;
+    padding: 56px 0 96px;
+  }
+  .bb .bb-container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── section ── */
+  .bb-section { margin-top: 88px; }
+  .bb-section:first-child { margin-top: 0; }
+  .bb-eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: .18em;
+    color: var(--bb-muted); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .bb h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800; line-height: 1.05; letter-spacing: -.02em;
+    color: var(--bb-navy);
+    margin: 0;
+  }
+  .bb h1 span { color: var(--bb-red); }
+  .bb h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px; font-weight: 700; letter-spacing: -.01em;
+    color: var(--bb-navy);
+    margin: 0 0 8px;
+  }
+  .bb .bb-lead { font-size: 16px; color: var(--bb-muted); max-width: 640px; margin: 12px 0 0; }
+
+  /* ── hero ── */
+  .bb-hero {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px;
+    align-items: center; padding-top: 24px;
+  }
+  .bb-hero-meta {
+    background: var(--bb-navy);
+    color: #fff;
+    border-radius: var(--bb-radius);
+    padding: 44px 40px;
+    display: grid; gap: 14px;
+  }
+  .bb-hero-meta img { max-width: 340px; filter: brightness(0) invert(1); }
+  .bb-hero-meta .row { display: flex; justify-content: space-between; gap: 16px; font-size: 13px;
+    padding: 10px 0; border-top: 1px solid rgba(255,255,255,.14); }
+  .bb-hero-meta .row:first-of-type { border-top: 0; padding-top: 20px; }
+  .bb-hero-meta .row .k { opacity: .6; text-transform: uppercase; letter-spacing: .14em; font-size: 10px; font-weight: 700; }
+  .bb-hero-meta .row .v { text-align: right; }
+  @media (max-width: 860px) {
+    .bb-hero { grid-template-columns: 1fr; }
+    .bb-hero-meta { padding: 32px 24px; }
+  }
+
+  /* ── logo variants grid ── */
+  .bb-logos {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  @media (max-width: 720px) { .bb-logos { grid-template-columns: 1fr; } }
+  .bb-logo-card {
+    border: 1px solid var(--bb-hair);
+    border-radius: var(--bb-radius);
+    overflow: hidden;
+    background: #fff;
+  }
+  .bb-logo-card .stage {
+    aspect-ratio: 16/9;
+    display: grid; place-items: center;
+    padding: 40px;
+  }
+  .bb-logo-card .stage img { max-width: 78%; max-height: 100%; }
+  .bb-logo-card .meta {
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: #fff; border-top: 1px solid var(--bb-hair);
+  }
+  .bb-logo-card .meta strong { font-weight: 600; font-size: 14px; }
+  .bb-logo-card .meta em { font-style: normal; color: var(--bb-muted); font-size: 12px; }
+  .stage-white   { background: #ffffff; }
+  .stage-light   { background: var(--bb-tint); }
+  .stage-navy    { background: var(--bb-navy); }
+  .stage-red     { background: var(--bb-red); }
+  .stage-white .logo,
+  .stage-light .logo { }
+  .stage-navy .logo,
+  .stage-red  .logo  { filter: brightness(0) invert(1); }
+  /* Monochrome navy — mask trick tinting the logo silhouette */
+  .mono-nav {
+    aspect-ratio: 16/9;
+    display: grid; place-items: center; padding: 40px;
+  }
+  .mono-nav .mono {
+    width: 340px; height: 130px;
+    background-color: var(--bb-navy);
+    -webkit-mask: var(--logo-url) center/contain no-repeat;
+            mask: var(--logo-url) center/contain no-repeat;
+  }
+  .mono-nav.on-light { background: var(--bb-tint); }
+  .mono-nav.on-white { background: #fff; }
+
+  /* ── colors ── */
+  .bb-colors {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  @media (max-width: 900px) { .bb-colors { grid-template-columns: repeat(2, 1fr); } }
+  .bb-swatch {
+    border-radius: var(--bb-radius);
+    overflow: hidden; border: 1px solid var(--bb-hair);
+    background: #fff;
+  }
+  .bb-swatch .chip { height: 140px; }
+  .bb-swatch .info { padding: 16px 18px; display: grid; gap: 6px; }
+  .bb-swatch .info .name { font-weight: 700; font-size: 14px; letter-spacing: -.01em; }
+  .bb-swatch .info .role { font-size: 11px; color: var(--bb-muted); text-transform: uppercase; letter-spacing: .14em; font-weight: 600; }
+  .bb-swatch .info .codes { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--bb-ink); display: grid; gap: 2px; margin-top: 8px; }
+  .bb-swatch .info .codes span { opacity: .8; }
+
+  /* ── typography ── */
+  .bb-types {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 780px) { .bb-types { grid-template-columns: 1fr; } }
+  .bb-type {
+    border: 1px solid var(--bb-hair); border-radius: var(--bb-radius);
+    padding: 32px; background: #fff;
+  }
+  .bb-type .fam { font-family: 'Montserrat', sans-serif; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--bb-muted); font-weight: 700; }
+  .bb-type .name { margin-top: 6px; font-size: 32px; font-weight: 800; letter-spacing: -.02em; color: var(--bb-navy); font-family: 'Montserrat', sans-serif; }
+  .bb-type.inter .name { font-family: 'Inter', sans-serif; font-weight: 700; }
+  .bb-type .spec { margin-top: 18px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--bb-muted); }
+  .bb-type .spec span { border: 1px solid var(--bb-hair); padding: 4px 10px; border-radius: 999px; }
+  .bb-type .sample { margin-top: 22px; }
+  .bb-type .sample .aa { font-size: 64px; line-height: 1; letter-spacing: -.02em; color: var(--bb-navy); font-family: 'Montserrat', sans-serif; font-weight: 800; }
+  .bb-type.inter .sample .aa { font-family: 'Inter', sans-serif; font-weight: 700; }
+  .bb-type .sample p { margin: 12px 0 0; font-size: 15px; line-height: 1.6; color: var(--bb-ink); max-width: 40ch; }
+
+  /* ── clear space + min size ── */
+  .bb-guides { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .bb-guides { grid-template-columns: 1fr; } }
+  .bb-clearspace {
+    border: 1px solid var(--bb-hair); border-radius: var(--bb-radius);
+    padding: 32px; background: #fff;
+    display: grid; gap: 20px;
+  }
+  .bb-clearspace .frame {
+    background: var(--bb-tint);
+    border: 2px dashed rgba(26,47,92,.25);
+    aspect-ratio: 16/8;
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .bb-clearspace .frame::before,
+  .bb-clearspace .frame::after {
+    content: 'X'; position: absolute; font-family: 'Montserrat', sans-serif;
+    font-weight: 800; color: var(--bb-navy); font-size: 20px; opacity: .35;
+  }
+  .bb-clearspace .frame::before { top: 8px;  left: 8px; }
+  .bb-clearspace .frame::after  { bottom: 8px; right: 8px; }
+  .bb-clearspace .frame img { max-width: 55%; }
+  .bb-clearspace p { margin: 0; font-size: 13px; color: var(--bb-muted); }
+
+  .bb-minsize {
+    border: 1px solid var(--bb-hair); border-radius: var(--bb-radius);
+    padding: 32px; background: #fff;
+    display: grid; gap: 24px; place-content: center; text-align: center;
+  }
+  .bb-minsize .rule {
+    display: grid; grid-template-columns: auto auto; gap: 20px; align-items: center; justify-content: center;
+  }
+  .bb-minsize .rule img { width: var(--w); height: auto; }
+  .bb-minsize .rule .lbl { font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--bb-navy); font-size: 14px; letter-spacing: -.01em; }
+  .bb-minsize .rule .lbl small { display: block; color: var(--bb-muted); font-weight: 500; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; }
+
+  /* ── don'ts ── */
+  .bb-donts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .bb-donts { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .bb-donts { grid-template-columns: 1fr; } }
+  .bb-dont {
+    border: 1px solid var(--bb-hair); border-radius: var(--bb-radius);
+    background: #fff; overflow: hidden;
+  }
+  .bb-dont .stage {
+    aspect-ratio: 4/2.6; background: var(--bb-tint);
+    display: grid; place-items: center; padding: 30px; position: relative;
+  }
+  .bb-dont .stage img { max-width: 70%; max-height: 100%; }
+  .bb-dont .stage::after {
+    content: ''; position: absolute; top: 12px; right: 12px;
+    width: 28px; height: 28px; border-radius: 999px;
+    background: var(--bb-danger) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'><line x1='4' y1='4' x2='20' y2='20'/><line x1='20' y1='4' x2='4' y2='20'/></svg>") center/16px no-repeat;
+  }
+  .bb-dont .cap { padding: 14px 18px; font-size: 13px; color: var(--bb-ink); line-height: 1.4; border-top: 1px solid var(--bb-hair); }
+  .stretch img   { transform: scaleX(1.35) scaleY(.75); }
+  .recolor img   { filter: hue-rotate(230deg) saturate(1.4); }
+  .rotate img    { transform: rotate(-8deg); }
+  .noise         { background: linear-gradient(135deg, #888 0%, #b8b8b8 40%, #666 100%) !important; }
+  .shadow img    { filter: drop-shadow(6px 6px 0 rgba(0,0,0,.3)); }
+  .fade img      { opacity: .35; }
+
+  /* ── applications ── */
+  .bb-apps {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 900px) { .bb-apps { grid-template-columns: 1fr; } }
+  .bb-app-card {
+    background: #fff; border: 1px solid var(--bb-hair);
+    border-radius: var(--bb-radius); overflow: hidden;
+  }
+  .bb-app-card .hdr {
+    font-family: 'Montserrat', sans-serif; font-size: 11px; letter-spacing: .18em;
+    color: var(--bb-muted); text-transform: uppercase; font-weight: 700;
+    padding: 14px 20px; border-bottom: 1px solid var(--bb-hair); background: #fafbfc;
+  }
+  .bb-app-card .body { padding: 32px; background: var(--bb-tint); }
+
+  .bcard {
+    background: var(--bb-navy); color: #fff; border-radius: 10px;
+    padding: 24px; max-width: 420px; aspect-ratio: 9/5;
+    box-shadow: 0 24px 48px -20px rgba(15,23,42,.35);
+    display: grid; gap: 12px; align-content: space-between;
+  }
+  .bcard img { width: 130px; filter: brightness(0) invert(1); }
+  .bcard .who { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -.01em; font-size: 18px; }
+  .bcard .role { color: rgba(255,255,255,.72); font-size: 12px; margin-top: 2px; }
+  .bcard .row { font-size: 12px; opacity: .9; }
+
+  .bcard-back {
+    background: #fff; color: var(--bb-navy); border-radius: 10px;
+    max-width: 420px; aspect-ratio: 9/5;
+    display: grid; place-items: center; padding: 30px;
+    border: 1px solid var(--bb-hair);
+    box-shadow: 0 24px 48px -20px rgba(15,23,42,.15);
+  }
+  .bcard-back img { width: 62%; }
+
+  .letter {
+    background: #fff; border-radius: 10px;
+    aspect-ratio: 1/1.414; overflow: hidden; display: grid;
+    grid-template-rows: auto 1fr auto;
+    box-shadow: 0 24px 48px -20px rgba(15,23,42,.15);
+  }
+  .letter .top { background: var(--bb-navy); padding: 20px 24px; }
+  .letter .top img { width: 130px; filter: brightness(0) invert(1); }
+  .letter .lines { padding: 40px 40px 20px; display: grid; gap: 12px; align-content: start; }
+  .letter .lines i { display: block; height: 8px; background: #edeef2; border-radius: 4px; }
+  .letter .lines i:nth-child(1) { width: 40%; background: var(--bb-navy); opacity: .15; height: 10px; }
+  .letter .lines i:nth-child(2) { width: 90%; }
+  .letter .lines i:nth-child(3) { width: 85%; }
+  .letter .lines i:nth-child(4) { width: 70%; }
+  .letter .foot { background: var(--bb-red); height: 12px; }
+
+  .bb-small {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  .bb-small .tile {
+    aspect-ratio: 1/1; border-radius: 12px;
+    display: grid; place-items: center;
+    position: relative; overflow: hidden;
+    padding: 20px; text-align: center;
+  }
+  .bb-small .tile.navy { background: var(--bb-navy); color: #fff; }
+  .bb-small .tile.red  { background: var(--bb-red);  color: #fff; }
+  .bb-small .tile.light { background: var(--bb-tint); color: var(--bb-navy); }
+  .bb-small .tile.hard  { background: #f4b34c; color: var(--bb-navy); }
+  .bb-small .tile img { max-width: 70%; margin-bottom: 10px; }
+  .bb-small .tile.navy img,
+  .bb-small .tile.red img { filter: brightness(0) invert(1); }
+  .bb-small .tile.hard .mark {
+    font-family: 'Montserrat', sans-serif; font-weight: 900;
+    font-size: 32px; letter-spacing: -.02em;
+    background: var(--bb-navy); color: #fff;
+    padding: 6px 14px; border-radius: 8px; display: inline-block;
+    margin-bottom: 10px;
+  }
+  .bb-small .tile.round { border-radius: 999px; }
+  .bb-small .tile .cap {
+    position: absolute; bottom: 10px; left: 12px; right: 12px;
+    font-size: 11px; opacity: .8; font-weight: 600;
+  }
+
+  /* ── footer ── */
+  .bb-foot {
+    margin-top: 88px; padding: 40px;
+    background: var(--bb-navy); color: rgba(255,255,255,.85);
+    border-radius: var(--bb-radius); display: grid;
+    grid-template-columns: 1fr auto; gap: 24px; align-items: center;
+  }
+  .bb-foot img { width: 160px; filter: brightness(0) invert(1); }
+  .bb-foot small { display: block; color: rgba(255,255,255,.55); font-size: 12px; }
+  @media (max-width: 720px) {
+    .bb-foot { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% set logo = url_for('static', filename='img/logo.png') %}
+<main class="bb" id="main" style="--logo-url: url('{{ logo }}');">
+  <div class="bb-container">
+
+    <!-- ── HERO ── -->
+    <section class="bb-hero bb-section">
+      <div>
+        <div class="bb-eyebrow">Брендбук · v2.0</div>
+        <h1>Фирменный стиль<br><span>«АВС-Лимитед»</span></h1>
+        <p class="bb-lead">
+          Правила использования логотипа, цветов и типографики. Обеспечивают
+          узнаваемость и единство коммуникаций — на бумаге, в цифре, на объектах.
+        </p>
+      </div>
+      <div class="bb-hero-meta">
+        <img src="{{ logo }}" alt="АВС-Лимитед">
+        <div class="row"><span class="k">Организация</span><span class="v">ТОО «АВС-Лимитед»</span></div>
+        <div class="row"><span class="k">Отрасль</span><span class="v">Строительство · нефтегаз</span></div>
+        <div class="row"><span class="k">Версия документа</span><span class="v">2.0 · 2026</span></div>
+        <div class="row"><span class="k">Формат</span><span class="v">Веб-брендбук</span></div>
+      </div>
+    </section>
+
+    <!-- ── 01 · LOGO VARIANTS ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">01 · Логотип</div>
+      <h2>Варианты знака</h2>
+      <p class="bb-lead">Шесть допустимых вариантов. Основная версия — приоритет, остальные — под условия носителя.</p>
+
+      <div class="bb-logos" style="margin-top: 28px;">
+        <div class="bb-logo-card">
+          <div class="stage stage-white"><img class="logo" src="{{ logo }}" alt="Основная"></div>
+          <div class="meta"><strong>Основная · на белом</strong><em>предпочтительно</em></div>
+        </div>
+        <div class="bb-logo-card">
+          <div class="stage stage-light"><img class="logo" src="{{ logo }}" alt="На светлом"></div>
+          <div class="meta"><strong>На светлом фоне</strong><em>bg ≤ 10 % насыщенности</em></div>
+        </div>
+        <div class="bb-logo-card">
+          <div class="stage stage-navy"><img class="logo" src="{{ logo }}" alt="Выворотка · navy"></div>
+          <div class="meta"><strong>Выворотка · на navy</strong><em>тёмный фон</em></div>
+        </div>
+        <div class="bb-logo-card">
+          <div class="stage stage-red"><img class="logo" src="{{ logo }}" alt="Выворотка · красный"></div>
+          <div class="meta"><strong>Выворотка · на красном</strong><em>акцентный фон</em></div>
+        </div>
+        <div class="bb-logo-card">
+          <div class="mono-nav on-white"><div class="mono"></div></div>
+          <div class="meta"><strong>Монохром · фирменный синий</strong><em>1 краска</em></div>
+        </div>
+        <div class="bb-logo-card">
+          <div class="mono-nav on-light"><div class="mono"></div></div>
+          <div class="meta"><strong>Монохром · на светлом</strong><em>гравировка, факс, штамп</em></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 02 · COLORS ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">02 · Цвета</div>
+      <h2>Фирменная палитра</h2>
+      <p class="bb-lead">Navy — основной, красный — акцент, серый — служебный. Всегда используйте точные значения ниже.</p>
+
+      <div class="bb-colors" style="margin-top: 28px;">
+        <div class="bb-swatch">
+          <div class="chip" style="background: #1a2f5c;"></div>
+          <div class="info">
+            <span class="role">Primary · Navy</span>
+            <span class="name">ABS Navy</span>
+            <div class="codes">
+              <span>HEX  #1A2F5C</span>
+              <span>RGB  26 · 47 · 92</span>
+              <span>CMYK 100 · 87 · 32 · 25</span>
+            </div>
+          </div>
+        </div>
+        <div class="bb-swatch">
+          <div class="chip" style="background: #c8302d;"></div>
+          <div class="info">
+            <span class="role">Accent · Red</span>
+            <span class="name">ABS Red</span>
+            <div class="codes">
+              <span>HEX  #C8302D</span>
+              <span>RGB  200 · 48 · 45</span>
+              <span>CMYK 15 · 96 · 92 · 5</span>
+            </div>
+          </div>
+        </div>
+        <div class="bb-swatch">
+          <div class="chip" style="background: #7a7f87;"></div>
+          <div class="info">
+            <span class="role">Secondary · Gray</span>
+            <span class="name">ABS Steel</span>
+            <div class="codes">
+              <span>HEX  #7A7F87</span>
+              <span>RGB  122 · 127 · 135</span>
+              <span>CMYK 55 · 44 · 40 · 8</span>
+            </div>
+          </div>
+        </div>
+        <div class="bb-swatch">
+          <div class="chip" style="background: #eef1f6; border-bottom: 1px solid var(--bb-hair);"></div>
+          <div class="info">
+            <span class="role">Neutral · Light</span>
+            <span class="name">ABS Fog</span>
+            <div class="codes">
+              <span>HEX  #EEF1F6</span>
+              <span>RGB  238 · 241 · 246</span>
+              <span>CMYK 5 · 3 · 2 · 0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 03 · TYPOGRAPHY ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">03 · Типографика</div>
+      <h2>Шрифты</h2>
+      <p class="bb-lead">Заголовки — Montserrat, текст — Inter. Обе гарнитуры бесплатны и поддерживают кириллицу.</p>
+
+      <div class="bb-types" style="margin-top: 28px;">
+        <div class="bb-type">
+          <div class="fam">Заголовки</div>
+          <div class="name">Montserrat</div>
+          <div class="spec">
+            <span>Extrabold 800</span><span>Bold 700</span><span>Semibold 600</span>
+          </div>
+          <div class="sample">
+            <div class="aa">Aa Бб</div>
+            <p>Мы строим объекты нефтегаза, промышленности и жилья по стандартам ISO 9001, ISO 14001 и OHSAS 18001.</p>
+          </div>
+        </div>
+        <div class="bb-type inter">
+          <div class="fam">Текст</div>
+          <div class="name">Inter</div>
+          <div class="spec">
+            <span>Bold 700</span><span>Semibold 600</span><span>Regular 400</span>
+          </div>
+          <div class="sample">
+            <div class="aa">Aa Бб</div>
+            <p>Мы строим объекты нефтегаза, промышленности и жилья по стандартам ISO 9001, ISO 14001 и OHSAS 18001.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 04 · CLEAR SPACE + MIN SIZE ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">04 · Охранная зона и размер</div>
+      <h2>Пропорции и защитная область</h2>
+      <p class="bb-lead">Минимальный отступ вокруг знака = высоте буквы «X» в тексте лого. Никаких элементов, текста или изображений внутри этой зоны.</p>
+
+      <div class="bb-guides" style="margin-top: 28px;">
+        <div class="bb-clearspace">
+          <div class="frame">
+            <img src="{{ logo }}" alt="охранная зона">
+          </div>
+          <p>Расстояние «X» — высота символа «A» текста логотипа. Соблюдайте этот отступ до края носителя и до других объектов.</p>
+        </div>
+        <div class="bb-minsize">
+          <div class="rule" style="--w: 220px;">
+            <img src="{{ logo }}" alt="печать" style="--w: 220px;">
+            <div class="lbl"><small>Печать</small>от 40 мм ширины</div>
+          </div>
+          <div class="rule" style="--w: 120px;">
+            <img src="{{ logo }}" alt="экран" style="--w: 120px;">
+            <div class="lbl"><small>Экран</small>от 120 px ширины</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 05 · DON'TS ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">05 · Ограничения</div>
+      <h2>Чего не делать</h2>
+      <p class="bb-lead">Любое из указанных действий разрушает узнаваемость и запрещено.</p>
+
+      <div class="bb-donts" style="margin-top: 28px;">
+        <div class="bb-dont">
+          <div class="stage stretch"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не растягивать и не сжимать — сохраняйте пропорции.</div>
+        </div>
+        <div class="bb-dont">
+          <div class="stage recolor"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не перекрашивать в посторонние цвета.</div>
+        </div>
+        <div class="bb-dont">
+          <div class="stage rotate"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не поворачивать и не наклонять.</div>
+        </div>
+        <div class="bb-dont">
+          <div class="stage noise"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не размещать на пёстром / контрастном фоне без выворотки.</div>
+        </div>
+        <div class="bb-dont">
+          <div class="stage shadow"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не добавлять тени, обводки и эффекты.</div>
+        </div>
+        <div class="bb-dont">
+          <div class="stage fade"><img src="{{ logo }}" alt=""></div>
+          <div class="cap">Не снижать непрозрачность и не осветлять логотип.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 06 · APPLICATIONS ── -->
+    <section class="bb-section">
+      <div class="bb-eyebrow">06 · Применение</div>
+      <h2>Носители</h2>
+      <p class="bb-lead">Готовые примеры фирменных материалов.</p>
+
+      <div class="bb-apps" style="margin-top: 28px;">
+        <div class="bb-app-card">
+          <div class="hdr">Визитная карточка · 90 × 50 мм</div>
+          <div class="body">
+            <div class="bcard">
+              <img src="{{ logo }}" alt="АВС-Лимитед">
+              <div>
+                <div class="who">Даярдиев Берик Кобланович</div>
+                <div class="role">Генеральный директор</div>
+              </div>
+              <div>
+                <div class="row">+7 708 907 97 26 · info@abs-ltd.kz</div>
+                <div class="row">г. Атырау, мкр. Авангард-3, 74А</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bb-app-card">
+          <div class="hdr">Оборотная сторона</div>
+          <div class="body" style="display: grid; place-items: center;">
+            <div class="bcard-back">
+              <img src="{{ logo }}" alt="АВС-Лимитед">
+            </div>
+          </div>
+        </div>
+
+        <div class="bb-app-card">
+          <div class="hdr">Фирменный бланк · А4</div>
+          <div class="body">
+            <div class="letter">
+              <div class="top"><img src="{{ logo }}" alt="АВС-Лимитед"></div>
+              <div class="lines">
+                <i></i><i></i><i></i><i></i>
+              </div>
+              <div class="foot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bb-app-card">
+          <div class="hdr">Другие носители</div>
+          <div class="body">
+            <div class="bb-small">
+              <div class="tile navy">
+                <img src="{{ logo }}" alt="">
+                <span class="cap">Вывеска / фасад</span>
+              </div>
+              <div class="tile hard">
+                <span class="mark">ABC</span>
+                <span class="cap">Каска / спецодежда</span>
+              </div>
+              <div class="tile light round">
+                <img src="{{ logo }}" alt="" style="filter: none;">
+                <span class="cap" style="position: static; margin-top: 6px;">Аватар соцсетей</span>
+              </div>
+              <div class="tile light">
+                <img src="{{ logo }}" alt="" style="max-width: 78%; filter: none;">
+                <span class="cap">Борт спецтехники</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOT ── -->
+    <footer class="bb-foot">
+      <div>
+        <img src="{{ logo }}" alt="АВС-Лимитед">
+        <p style="margin-top: 12px; font-size: 14px;">Брендбук ТОО «АВС-Лимитед». Использование стиля вне правил документа требует согласования.</p>
+        <small>© {{ setting('brand_name', 'ТОО «АВС-Лимитед»') }} · 2026</small>
+      </div>
+      <div style="text-align: right; font-size: 12px; opacity: .7;">
+        v2.0 · Атырау
+      </div>
+    </footer>
+
+  </div>
+</main>
+{% endblock %}

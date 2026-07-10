@@ -436,6 +436,15 @@ def contacts():
     return render_template("contacts.html", page=page)
 
 
+@app.route("/brandbook", endpoint="brandbook")
+def brandbook():
+    """Публичная страница фирменного стиля — Logo grid, colors, typography,
+    clear space, minimum size, ограничения (do-not), applications. Без БД —
+    страница целиком декларативная, шаблон сам знает все правила бренда.
+    """
+    return render_template("brandbook.html", page=None)
+
+
 @app.route("/robots.txt")
 def robots():
     return app.response_class(
