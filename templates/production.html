@@ -29,9 +29,59 @@
 </section>
 {% endif %}
 
+{# ============================== A2) ИЗБРАННЫЕ АКТИВЫ: видео + фотогалерея #}
+{% for a in spotlights %}
+<section class="section{% if loop.index0 is even %} section--soft{% endif %}">
+  <div class="container">
+    {# Категория не дублируется в надзаголовке — она есть в фактах ниже. #}
+    {{ ui.sec_head('Собственное производство', a.title, center=true) }}
+
+    <div class="spotlight{% if not a.video %} spotlight--no-video{% endif %}" data-reveal>
+      {% if a.video %}
+      <div class="video-wrap video-wrap--portrait">
+        <video controls preload="none" playsinline
+               poster="{{ media(a.video_poster) if a.video_poster else media(a.image) }}">
+          {# type не указываем: допустимы mp4/webm/ogg/mov — пусть браузер определит сам #}
+          <source src="{{ media(a.video) }}">
+          Ваш браузер не поддерживает встроенное видео.
+          <a href="{{ media(a.video) }}">Скачать видео</a>.
+        </video>
+      </div>
+      {% endif %}
+
+      <div class="spotlight__body">
+        <div class="spotlight__badges">
+          {% if a.year %}<span class="badge-soft">{{ ui.icon('calendar') }} {{ a.year }}</span>{% endif %}
+          {% if a.capacity %}<span class="badge-soft">{{ ui.icon('gauge') }} {{ a.capacity }}</span>{% endif %}
+        </div>
+        {% if a.description %}<div class="prose">{{ a.description|paragraphs }}</div>{% endif %}
+        <div class="asset-meta">
+          {% if a.location %}<div>{{ ui.icon('map-pin') }} <b>Локация:</b> {{ a.location }}</div>{% endif %}
+          {% if a.category %}<div>{{ ui.icon('factory') }} <b>Тип актива:</b> {{ a.category }}</div>{% endif %}
+        </div>
+        <a href="{{ url_for('contacts') }}" class="btn btn--primary">{{ ui.icon('send') }} Запросить продукцию завода</a>
+      </div>
+    </div>
+
+    {% if a.gallery_items %}
+    <div class="gallery" data-reveal data-delay="1">
+      {% for g in a.gallery_items %}
+      <a class="g-item" href="{{ media(g.src) }}" data-lightbox="{{ media(g.src) }}" data-caption="{{ g.caption or a.title }}">
+        <img src="{{ media(g.src) }}" alt="{{ g.caption or a.title }}" loading="lazy">
+        {% if g.caption %}<span class="g-cap">{{ g.caption }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endfor %}
+
 {# ===================================================== B) СЕТКА АКТИВОВ #}
+{# Фон чередуется с блоками избранных активов выше, чтобы секции не слипались. #}
 {% if assets %}
-<section class="section section--soft">
+{% set grid_soft = (spotlights|length) % 2 == 0 %}
+<section class="section{{ ' section--soft' if grid_soft }}">
   <div class="container">
     {{ ui.sec_head('Наши мощности', 'Производственные активы', 'Заводы, установки, карьер и техника, обеспечивающие выполнение работ полного цикла.', center=true) }}
     <div class="grid grid-2">

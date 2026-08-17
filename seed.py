@@ -284,6 +284,39 @@ LICENSES = [
 ]
 
 
+# --------------------------------------------------------------------------- #
+#  Завод активированного минерального порошка (г. Кульсары) — медиа с открытия
+#  завода в мае 2026 года. Вынесено в константы: используется и при первичном
+#  наполнении (ASSETS), и в ensure_minpowder_media() для уже наполненных баз.
+# --------------------------------------------------------------------------- #
+MINPOWDER_DESCRIPTION = (
+    "Завод по выпуску активированного минерального порошка введён в эксплуатацию в мае "
+    "2026 года в промышленной зоне г. Кульсары. Минеральный порошок — неотъемлемый "
+    "ингредиент при выпуске асфальтобетонных смесей, и собственное производство выводит "
+    "компанию на уровень полного самообеспечения материалами.\n\n"
+    "Технологическая линия включает приёмные бункеры сырья, сушильный барабан, "
+    "помольно-сепарационный комплекс с системой аспирации и силосы хранения готовой "
+    "продукции с отгрузкой в биг-беги. Завод выпускает качественный продукт как для "
+    "собственных объектов компании, так и для сторонних покупателей.\n\n"
+    "Ключевое значение собственных производственных активов — полный контроль качества "
+    "на всех этапах производства и независимость от поставщиков, а значит гарантия "
+    "сроков выполнения работ."
+)
+
+MINPOWDER_GALLERY = "\n".join([
+    f'{IMG("minpowder_general.jpg")} | Завод активированного минерального порошка, г. Кульсары',
+    f'{IMG("minpowder_panorama.jpg")} | Технологическая линия: приёмные бункеры, сушильный барабан и конвейеры',
+    f'{IMG("minpowder_dryer.jpg")} | Сушильный барабан и приёмный бункер исходного сырья',
+    f'{IMG("minpowder_silos.jpg")} | Силосы хранения готового порошка и помольный комплекс',
+    f'{IMG("minpowder_conveyor.jpg")} | Наклонный конвейер подачи сырья и система аспирации',
+    f'{IMG("image19.jpeg")} | Сушильный барабан с системой циклонов',
+    f'{IMG("image20.jpeg")} | Приёмный бункер и линия сушки сырья',
+])
+
+MINPOWDER_VIDEO = "video/minpowder.mp4"
+MINPOWDER_POSTER = IMG("minpowder_poster.jpg")
+
+
 ASSETS = [
     dict(title="Производственная база в г. Атырау", category="Производственная база", year="2016",
          location="г. Атырау", capacity="Современная материально-техническая база",
@@ -318,10 +351,10 @@ ASSETS = [
          image=IMG("image17.jpg"), image2=IMG("image18.jpg"), sort_order=4),
     dict(title="Завод активированного минерального порошка", category="Завод", year="2026",
          location="г. Кульсары, промзона", capacity="Полный цикл",
-         description="Введён в эксплуатацию в мае 2026 года. Минеральный порошок — неотъемлемый "
-                     "ингредиент при выпуске асфальта. Выход на уровень самообеспечения "
-                     "материалами и производство продукта как для себя, так и для покупателей.",
-         image=IMG("image19.jpeg"), image2=IMG("image20.jpeg"), sort_order=5),
+         description=MINPOWDER_DESCRIPTION,
+         image=IMG("minpowder_panorama.jpg"), image2=IMG("minpowder_silos.jpg"),
+         gallery=MINPOWDER_GALLERY, video=MINPOWDER_VIDEO, video_poster=MINPOWDER_POSTER,
+         is_featured=True, sort_order=5),
     dict(title="Бетонно-смесительные установки (БСУ)", category="БСУ", year="",
          location="г. Атырау, п. Бирлик", capacity="160 м³/час (2 установки)",
          description="Две бетонно-смесительные установки с общей производительностью 160 м³/час, "
@@ -618,6 +651,28 @@ def ensure_school13():
     if Project.query.filter(Project.title.like("%№13%")).first():
         return False
     db.session.add(Project(**SCHOOL13))
+    db.session.commit()
+    return True
+
+
+def ensure_minpowder_media():
+    """Идемпотентно добавляет фотогалерею и видео завода минерального порошка.
+
+    Актив уже существует в наполненных базах (напр. на постоянном томе Railway),
+    поэтому дополняем именно его. Повторные запуски ничего не меняют; если
+    администратор позже отредактировал галерею вручную — она не перезаписывается.
+    Возвращает True, если запись была обновлена.
+    """
+    asset = Asset.query.filter(Asset.title.like("%минерального порошка%")).first()
+    if asset is None or asset.video:
+        return False
+    asset.description = MINPOWDER_DESCRIPTION
+    asset.image = IMG("minpowder_panorama.jpg")
+    asset.image2 = IMG("minpowder_silos.jpg")
+    asset.gallery = MINPOWDER_GALLERY
+    asset.video = MINPOWDER_VIDEO
+    asset.video_poster = MINPOWDER_POSTER
+    asset.is_featured = True
     db.session.commit()
     return True
 

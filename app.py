@@ -325,8 +325,14 @@ def services():
 @app.route("/proizvodstvo", endpoint="production")
 def production():
     page = get_published_page("production")
-    assets = Asset.query.filter_by(is_active=True).order_by(Asset.sort_order).all()
-    return render_template("production.html", page=page, assets=assets)
+    items = Asset.query.filter_by(is_active=True).order_by(Asset.sort_order).all()
+    # Избранные активы показываются отдельными блоками (видео + фотогалерея),
+    # остальные — обычной сеткой карточек.
+    spotlights = [a for a in items if a.is_featured]
+    assets = [a for a in items if not a.is_featured]
+    return render_template(
+        "production.html", page=page, assets=assets, spotlights=spotlights
+    )
 
 
 @app.route("/tehnika", endpoint="equipment")
@@ -770,7 +776,7 @@ ADMIN_REGISTRY = {
     "assets": {
         "model": Asset, "title": "Производственные активы", "singular": "актив", "icon": "factory",
         "order_by": Asset.sort_order,
-        "list_display": ["title", "category", "year", "sort_order", "is_active"],
+        "list_display": ["title", "category", "year", "is_featured", "sort_order", "is_active"],
         "fields": [
             F("title", "Название", "text"),
             F("category", "Категория", "text"),
@@ -780,6 +786,12 @@ ADMIN_REGISTRY = {
             F("year", "Год", "text"),
             F("image", "Изображение 1", "image"),
             F("image2", "Изображение 2", "image"),
+            F("gallery", "Галерея (фото объекта)", "gallery"),
+            F("video", "Видео объекта", "video"),
+            F("video_poster", "Постер (обложка видео)", "image"),
+            F("is_featured", "Отдельный блок", "bool",
+              hint="актив выносится из общей сетки наверх страницы и показывается "
+                   "крупно, вместе с видео и фотогалереей"),
             F("sort_order", "Порядок", "number"),
             F("is_active", "Активно", "bool"),
         ],

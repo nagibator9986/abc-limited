@@ -14,6 +14,30 @@ db = SQLAlchemy()
 
 
 # --------------------------------------------------------------------------- #
+#  Общая логика фотогалереи (проекты, производственные активы)
+# --------------------------------------------------------------------------- #
+class GalleryMixin:
+    """Разбор текстового поля `gallery` в список изображений с подписями.
+
+    Формат — по одной записи в строке: «путь» либо «путь | подпись».
+    """
+
+    @property
+    def gallery_items(self):
+        items = []
+        for line in (self.gallery or "").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if "|" in line:
+                src, caption = line.split("|", 1)
+                items.append({"src": src.strip(), "caption": caption.strip()})
+            else:
+                items.append({"src": line, "caption": ""})
+        return items
+
+
+# --------------------------------------------------------------------------- #
 #  Администраторы CMS
 # --------------------------------------------------------------------------- #
 class AdminUser(db.Model):
@@ -140,7 +164,7 @@ class License(db.Model):
 # --------------------------------------------------------------------------- #
 #  Производственные активы (базы, заводы, БСУ, карьер…)
 # --------------------------------------------------------------------------- #
-class Asset(db.Model):
+class Asset(GalleryMixin, db.Model):
     __tablename__ = "assets"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -152,6 +176,12 @@ class Asset(db.Model):
     year = db.Column(db.String(40), default="")
     image = db.Column(db.String(200), default="")
     image2 = db.Column(db.String(200), default="")
+    gallery = db.Column(db.Text, default="")                 # галерея: «путь» или «путь | подпись»
+    video = db.Column(db.String(200), default="")            # видео объекта
+    video_poster = db.Column(db.String(200), default="")     # постер (кадр) для видео
+    # Избранный актив выносится на страницу «Производство» отдельным блоком
+    # с видео и фотогалереей — вместо обычной карточки в сетке.
+    is_featured = db.Column(db.Boolean, default=False)
     sort_order = db.Column(db.Integer, default=0)
     is_active = db.Column(db.Boolean, default=True)
 
@@ -176,7 +206,7 @@ class Equipment(db.Model):
 # --------------------------------------------------------------------------- #
 #  Проекты / портфолио
 # --------------------------------------------------------------------------- #
-class Project(db.Model):
+class Project(GalleryMixin, db.Model):
     __tablename__ = "projects"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -193,21 +223,6 @@ class Project(db.Model):
     is_featured = db.Column(db.Boolean, default=False)
     sort_order = db.Column(db.Integer, default=0)
     is_active = db.Column(db.Boolean, default=True)
-
-    @property
-    def gallery_items(self):
-        """Галерея → список {src, caption}. Формат строки: «путь» или «путь | подпись»."""
-        items = []
-        for line in (self.gallery or "").splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            if "|" in line:
-                src, caption = line.split("|", 1)
-                items.append({"src": src.strip(), "caption": caption.strip()})
-            else:
-                items.append({"src": line, "caption": ""})
-        return items
 
 
 # --------------------------------------------------------------------------- #

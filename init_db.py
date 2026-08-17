@@ -8,7 +8,7 @@ from sqlalchemy import inspect, text
 
 from app import app, db
 from models import AdminUser
-from seed import ensure_school13, populate
+from seed import ensure_minpowder_media, ensure_school13, populate
 
 
 # Колонки, добавленные после первичного релиза. Прогоняются на каждом старте
@@ -19,6 +19,13 @@ _ADDED_COLUMNS = {
         ("gallery", "TEXT DEFAULT ''"),
         ("video", "VARCHAR(200) DEFAULT ''"),
         ("video_poster", "VARCHAR(200) DEFAULT ''"),
+    ],
+    "assets": [
+        ("gallery", "TEXT DEFAULT ''"),
+        ("video", "VARCHAR(200) DEFAULT ''"),
+        ("video_poster", "VARCHAR(200) DEFAULT ''"),
+        # FALSE, а не 0: Postgres не приводит integer к boolean в DEFAULT
+        ("is_featured", "BOOLEAN DEFAULT FALSE"),
     ],
 }
 
@@ -54,6 +61,10 @@ def init():
         # и на уже наполненных базах (напр. постоянный том Railway).
         if ensure_school13():
             print("✓ Добавлен проект «Школа №13» с фотогалереей и видео.")
+        # То же для медиа завода активированного минерального порошка: актив уже
+        # существует в наполненных базах — дополняем его галереей и видео.
+        if ensure_minpowder_media():
+            print("✓ Завод минерального порошка дополнен фотогалереей и видео.")
 
 
 if __name__ == "__main__":

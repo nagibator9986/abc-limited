@@ -747,8 +747,29 @@ textarea:focus-visible, .btn:focus-visible, .burger:focus-visible,
   box-shadow: var(--shadow-lg); background: #000; aspect-ratio: 16 / 9;
 }
 .video-wrap video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+/* Вертикальное (снятое на телефон) видео: без чёрных полей по бокам. */
+.video-wrap--portrait { max-width: 360px; aspect-ratio: 9 / 16; }
+.video-wrap--portrait video { object-fit: cover; }
+
+/* --------------------------------------------- избранный актив: видео + текст */
+.spotlight {
+  display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 44px; align-items: center; margin-bottom: 46px;
+}
+.spotlight--no-video { grid-template-columns: 1fr; }
+.spotlight__body {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 20px;
+  max-width: 68ch;  /* комфортная длина строки на широких экранах */
+}
+.spotlight__body .prose { margin: 0; }
+.spotlight__body .asset-meta { margin-top: 0; width: 100%; }
+.spotlight__badges { display: flex; flex-wrap: wrap; gap: 10px; }
 
 @media (max-width: 860px) {
   .proj-detail { grid-template-columns: 1fr; gap: 32px; }
   .proj-detail__facts { position: static; }
+}
+@media (max-width: 900px) {
+  .spotlight { grid-template-columns: 1fr; gap: 30px; margin-bottom: 36px; }
+  .video-wrap--portrait { max-width: 320px; }
 }
